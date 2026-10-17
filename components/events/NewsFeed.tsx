@@ -53,7 +53,7 @@ export function NewsFeed({ game }: { game: GameState }) {
   const lesson = lessons[game.day - 1];
   return (
     <aside className="intelligence-column">
-      <section className="panel intelligence-panel">
+      <section className="panel intelligence-panel" data-tour="market-intelligence">
         <div className="panel-heading">
           <div className="flex items-center gap-2">
             <Radio size={15} className="text-amber-400" />

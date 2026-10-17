@@ -50,7 +50,7 @@ export function SellPanel({
       </div>
       <form onSubmit={submit} noValidate>
         <div className="order-layout">
-          <div className="order-inputs">
+          <div className="order-inputs" data-tour="order-inputs">
             <label className="field-label" htmlFor="buyer">
               Selling channel
             </label>
@@ -124,7 +124,7 @@ export function SellPanel({
               {kg(game.inventory)} kg in your farm portfolio
             </div>
           </div>
-          <div className="order-preview">
+          <div className="order-preview" data-tour="order-preview">
             <div className="preview-row">
               <span>Price per kg</span>
               <span>{money(offer.price)}</span>

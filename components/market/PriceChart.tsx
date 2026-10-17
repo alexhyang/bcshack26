@@ -37,7 +37,7 @@ export function PriceChart({ day }: { day: number }) {
     );
   }, [day, range]);
   return (
-    <section className="panel chart-panel">
+    <section className="panel chart-panel" data-tour="price-chart">
       <div className="panel-heading">
         <div className="flex items-center gap-2">
           <ChartNoAxesCombined size={16} className="text-emerald-400" />

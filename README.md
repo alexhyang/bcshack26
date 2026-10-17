@@ -16,7 +16,7 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000). The game starts with a complete scenario. Progress automatically saves in this browser’s localStorage. Reset Game clears the current season and starts fresh.
 
 ```bash
-npm test               # 38 unit and state tests
+npm test               # 46 unit and state tests
 npm run test:watch     # watch tests during development
 npm run typecheck     # TypeScript checks
 npm run lint          # Next.js, accessibility, and React lint rules
@@ -27,6 +27,8 @@ npm start             # serve the production build
 ```
 
 ## How to play
+
+A spotlight tour opens automatically every time you launch or reload the game, including when you resume a saved season. It highlights actual dashboard controls, scrolls them into view, and visits the real Trade History and Results pages. Use **Next** and **Back**, jump between steps, or press the always-visible **Skip tutorial** button at the top-right (Escape also skips). Skipping or finishing returns you to the game without changing your harvest or trades. The header’s book button reopens the tour from the beginning. See the [written tutorial](docs/tutorial/README.md) for a reference outside the game.
 
 1. Compare today’s wholesale, retail, and restaurant offers. Each has its own capacity, delivery fee, and per-kg handling/packaging cost.
 2. Select a buyer, enter kilograms (up to two decimal places), and review the full cost breakdown. Percent buttons use the smaller of remaining inventory and that buyer’s capacity.
@@ -64,6 +66,7 @@ components/
   events/             News, conditions, educational insights
   results/            Season results, baseline comparison, takeaways
   ui/                 Local shadcn/ui Button and Radix Dialog components
+  tutorial/           Automatic spotlight tour, page targets, positioning, styles
 engine/
   game.ts             Pure initialization and daily transitions
   trading.ts          Validation, cost preview, immutable order execution
@@ -86,11 +89,17 @@ React components render and collect input. They invoke Zustand actions rather th
 
 ## Verification
 
-38 Vitest tests cover eligible and rejected sales, exact expenses, fractional kilograms, immutable state, different buyers, one order per buyer/day, stale quotes, negative-return orders, holding costs, event rates, daily availability, trading on Day 7, finishing the game, no phantom final overnight charge, harvest conservation, cash reconciliation, final scoring, revealed-only history, replayed saves, corrupt saves, and actual Zustand reset persistence.
+46 Vitest tests cover eligible and rejected sales, exact expenses, fractional kilograms, immutable state, different buyers, one order per buyer/day, stale quotes, negative-return orders, holding costs, event rates, daily availability, trading on Day 7, finishing the game, no phantom final overnight charge, harvest conservation, cash reconciliation, final scoring, revealed-only history, replayed saves, corrupt saves, actual Zustand reset persistence, and responsive spotlight-tour positioning, and isolated development/production output folders.
 
 Manual production-browser verification covered desktop and mobile layouts, maximum-capacity sales, same-day sales to different buyers, save/reload, advancing through every market event, trading on Day 7, final results, and Play Again. A complete run (160 kg to the Day 1 restaurant, then 220 kg to the Day 7 restaurant and the remaining 453.86 kg to wholesale) produced **$1,131.17** after selling and storage expenses, **$155.17 above baseline**. The production route returned HTTP 200 with no browser console errors or warnings.
 
 ![FarmStreet dashboard](docs/farmstreet-dashboard.png)
+
+## Development and production build folders
+
+Development uses `.next-dev/`; `npm run build` and `npm start` use `.next/`. These are separate sibling folders so running a production build while the dev server is open cannot overwrite its JavaScript chunks. The setting lives in `next.config.mjs`. Both folders are generated and ignored by Git, ESLint, and Prettier.
+
+If an older running server shows `a[d] is not a function`, missing-chunk errors, or a loading screen after a build, stop it with Ctrl+C, run `npm run dev` again, then reload the browser. The updated configuration prevents this shared-cache collision. Your game save lives in browser localStorage and is unaffected by rebuilding or restarting the server.
 
 ## Deploy to Vercel
 

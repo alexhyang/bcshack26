@@ -4,7 +4,7 @@ import { kg, money } from "@/lib/utils";
 export function InventoryPanel({ game }: { game: GameState }) {
   const sold = game.transactions.reduce((sum, t) => sum + t.quantity, 0);
   return (
-    <section className="stats-grid" aria-label="Farm account summary">
+    <section className="stats-grid" data-tour="account-summary" aria-label="Farm account summary">
       <div className="stat-card">
         <div className="stat-label">
           Available cash

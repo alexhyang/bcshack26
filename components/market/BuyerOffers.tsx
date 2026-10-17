@@ -39,7 +39,7 @@ export function BuyerOffers({
       return previewOrder(b, qB).netReturn / qB - previewOrder(a, qA).netReturn / qA;
     })[0]?.id;
   return (
-    <section className="buyers-section">
+    <section className="buyers-section" data-tour="buyer-offers">
       <div className="section-heading">
         <h2>Today’s buyer offers</h2>
         <span className="subtle-label">One order per buyer / day</span>

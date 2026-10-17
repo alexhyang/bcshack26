@@ -36,7 +36,7 @@ export function Results({
           You’re on Day {game.day} of 7. Keep trading, compare your options, and finish the final
           session to see your complete results.
         </p>
-        <div className="progress-preview">
+        <div className="progress-preview" data-tour="season-results">
           <div>
             <span>Current selling margin</span>
             <strong className={score.netMargin >= 0 ? "positive" : "negative"}>
@@ -67,7 +67,10 @@ export function Results({
         <span className="eyebrow">SEASON 01 · FINAL RESULTS</span>
         <h2>Your harvest. Your results.</h2>
         <p>Seven days of decisions, one complete picture.</p>
-        <div className={`results-total ${score.netMargin >= 0 ? "positive" : "negative"}`}>
+        <div
+          data-tour="season-results"
+          className={`results-total ${score.netMargin >= 0 ? "positive" : "negative"}`}
+        >
           {money(score.netMargin)}
           <span>CAD</span>
         </div>

@@ -14,7 +14,7 @@ export function TradeHistory({
   const trades = [...game.transactions].reverse();
   const rows = compact ? trades.slice(0, 4) : trades;
   return (
-    <section className="panel transactions-panel">
+    <section className="panel transactions-panel" data-tour="trade-history">
       <div className="panel-heading">
         <div className="flex items-center gap-2">
           <ArrowRightLeft size={15} className="text-slate-500" />

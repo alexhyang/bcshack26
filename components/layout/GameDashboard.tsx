@@ -13,6 +13,7 @@ import {
 import { useGameStore } from "@/store/gameStore";
 import type { BuyerId, GameView } from "@/types/game";
 import { Header } from "./Header";
+import { Tutorial } from "@/components/tutorial/Tutorial";
 import { Sidebar } from "./Sidebar";
 import { InventoryPanel } from "@/components/farm/InventoryPanel";
 import { PriceChart } from "@/components/market/PriceChart";
@@ -34,6 +35,8 @@ import { kg, money } from "@/lib/utils";
 export function GameDashboard() {
   const { game, nextDay, reset } = useGameStore();
   const [ready, setReady] = useState(false);
+  // Deliberately not persisted: show the guide on every launch, including saved seasons.
+  const [tutorialOpen, setTutorialOpen] = useState(true);
   const [view, setView] = useState<GameView>("dashboard");
   const [selected, setSelected] = useState<BuyerId>("wholesaler");
   const [advanceOpen, setAdvanceOpen] = useState(false);
@@ -66,7 +69,7 @@ export function GameDashboard() {
   const lastSummary = game.summaries.at(-1);
   const todayTrades = game.transactions.filter((t) => t.day === game.day);
   const todayNet = todayTrades.reduce((sum, t) => sum + t.netReturn, 0);
-  const actualView = game.completed && view === "dashboard" ? "results" : view;
+  const actualView = game.completed && view === "dashboard" && !tutorialOpen ? "results" : view;
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [actualView, game.day]);
@@ -87,7 +90,22 @@ export function GameDashboard() {
       <a className="skip-link" href="#main">
         Skip to trading dashboard
       </a>
-      <Header day={game.day} completed={game.completed} onReset={restart} />
+      <Header
+        day={game.day}
+        completed={game.completed}
+        onReset={restart}
+        onTutorial={() => setTutorialOpen(true)}
+      />
+      {tutorialOpen && (
+        <Tutorial
+          onNavigate={setView}
+          onClose={() => {
+            setTutorialOpen(false);
+            setView(game.completed ? "results" : "dashboard");
+            window.scrollTo({ top: 0, behavior: "instant" });
+          }}
+        />
+      )}
       <div className="app-shell">
         <Sidebar game={game} view={actualView} setView={setView} />
         <main id="main" className="main-workspace">
@@ -215,7 +233,7 @@ export function GameDashboard() {
                     <Clock3 size={12} />
                     {game.day === 7 ? "Last call for your harvest" : "Tomorrow is a new market"}
                   </span>
-                  <Button size="lg" onClick={() => setAdvanceOpen(true)}>
+                  <Button size="lg" data-tour="next-day" onClick={() => setAdvanceOpen(true)}>
                     {game.day === 7 ? "End season" : "Next day"}
                     <ArrowRight size={16} />
                   </Button>

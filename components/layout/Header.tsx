@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { BookOpen, RotateCcw, Sprout, ArrowUpRight } from "lucide-react";
+import { BookOpen, RotateCcw, Sprout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,10 +14,12 @@ export function Header({
   day,
   completed,
   onReset,
+  onTutorial,
 }: {
   day: number;
   completed: boolean;
   onReset: () => void;
+  onTutorial: () => void;
 }) {
   return (
     <header className="topbar">
@@ -42,50 +44,15 @@ export function Header({
           <span className="session-separator" />
           <span className="simulated-label">SIMULATED</span>
         </span>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label="How to play">
-              <BookOpen size={18} />
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogTitle className="text-xl font-semibold">
-              Welcome to your trading desk.
-            </DialogTitle>
-            <DialogDescription className="mt-3 text-sm leading-6 text-slate-400">
-              You have 1,000 kg of carrots and seven days to make the most of your harvest. All
-              prices, buyers, and events are fictional.
-            </DialogDescription>
-            <ol className="help-list">
-              <li>
-                <b>Compare your buyers.</b> A higher price can come with lower capacity and higher
-                delivery costs.
-              </li>
-              <li>
-                <b>Place your orders.</b> Choose a buyer and quantity. Each buyer accepts one order
-                per day, even if you sell less than their capacity.
-              </li>
-              <li>
-                <b>Sell or hold.</b> Advancing charges storage on remaining stock, then removes
-                spoiled carrots. Freshness tracks quality; it does not apply an extra price
-                discount.
-              </li>
-              <li>
-                <b>Finish your season.</b> Trade on Day 7 before ending the game. Unsold stock has
-                no salvage value.
-              </li>
-            </ol>
-            <div className="info-note mt-4">
-              Cash includes selling returns minus storage. It can go below $0. Production costs are
-              excluded, so your result is a net selling margin, not full farm profit.
-            </div>
-            <DialogClose asChild>
-              <Button className="mt-5 w-full">
-                Let’s trade <ArrowUpRight size={16} />
-              </Button>
-            </DialogClose>
-          </DialogContent>
-        </Dialog>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="How to play"
+          title="Open tutorial"
+          onClick={onTutorial}
+        >
+          <BookOpen size={18} />
+        </Button>
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm" aria-label="Reset game">
