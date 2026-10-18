@@ -104,7 +104,7 @@ npm run build
 
 ## Scope and extension
 
-Carrots remain the single playable inventory from the existing MVP. All five configured crops have real daily demand/shock snapshots and appear in the read-only market watch. Add playable inventories separately if expanding gameplay later. Unknown existing crops get a default sensitivity of 0.65 (or their existing explicit value) and conservative default volatility rather than being removed.
+Farmers select one playable crop from 42 Canadian-grown crop choices and set the starting kilograms before their first trade. Every configured crop has daily demand/shock snapshots and appears in the read-only market watch. The selected crop drives buyer quotes and results. Unknown existing crops get a default sensitivity of 0.65 (or their existing explicit value) and conservative default volatility rather than being removed.
 
 Balance parameters are centralized in `config.ts`. Future balance changes should version the pricing/save rules before changing the interpretation of historical seeded seasons. No authentication, payments, network data, or extra persistence backend is involved.
 

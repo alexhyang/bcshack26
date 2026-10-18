@@ -10,6 +10,7 @@ import {
   Leaf,
 } from "lucide-react";
 import type { GameState, GameView } from "@/types/game";
+import { getGameCrop } from "@/data/crops";
 import { kg } from "@/lib/utils";
 export function Sidebar({
   game,
@@ -20,6 +21,7 @@ export function Sidebar({
   view: GameView;
   setView: (view: GameView) => void;
 }) {
+  const crop = getGameCrop(game);
   const nav = [
     { id: "dashboard", label: "Overview", icon: ChartNoAxesCombined },
     { id: "history", label: "Trade history", icon: History },
@@ -52,12 +54,12 @@ export function Sidebar({
         </div>
         <div className="crop-preview">
           <div className="carrot-art">
-            <CarrotArt />
+            {crop.id === "carrots" ? <CarrotArt /> : <Sprout size={42} aria-hidden="true" />}
           </div>
           <div>
-            <strong>Carrots</strong>
+            <strong>{crop.name}</strong>
             <span>
-              CRT <span className="text-slate-600">/</span> CAD
+              {crop.symbol} <span className="text-slate-600">/</span> CAD
             </span>
           </div>
           <ChevronRight size={15} className="ml-auto text-slate-600" />
@@ -66,16 +68,20 @@ export function Sidebar({
           {kg(game.inventory)}
           <span>kg</span>
         </div>
-        <div className="text-xs text-slate-500">of 1,000 kg initial harvest</div>
+        <div className="text-xs text-slate-500">
+          of {kg(crop.initialInventory)} kg initial harvest
+        </div>
         <div
           className="inventory-meter"
           role="progressbar"
           aria-label="Inventory remaining"
           aria-valuenow={game.inventory}
           aria-valuemin={0}
-          aria-valuemax={1000}
+          aria-valuemax={crop.initialInventory}
         >
-          <div style={{ width: `${game.inventory / 10}%` }} />
+          <div
+            style={{ width: `${Math.min(100, (game.inventory / crop.initialInventory) * 100)}%` }}
+          />
         </div>
         <div className="sidebar-pair">
           <span>Freshness</span>

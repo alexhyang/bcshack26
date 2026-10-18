@@ -285,7 +285,7 @@ export function GameDashboard() {
           </DialogTitle>
           <DialogDescription className="mt-3 text-sm leading-6 text-slate-400">
             {game.day === 7
-              ? "Your final results will include every sale, selling expense, storage cost, and unsold carrot."
+              ? "Your final results will include every sale, selling expense, storage cost, and unsold crop."
               : "Today’s offers will close. Remaining stock goes into storage before the next market session."}
           </DialogDescription>
           <div className="advance-preview">

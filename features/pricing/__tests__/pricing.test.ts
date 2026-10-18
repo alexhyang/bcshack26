@@ -135,14 +135,20 @@ describe("centralized crop pricing", () => {
     ).toBe(0);
   });
   it("keeps unknown existing crops with a default sensitivity", () => {
-    expect(getCropPricing({ id: "beets", name: "Beets", symbol: "BET" })).toMatchObject({
-      id: "beets",
-      name: "Beets",
-      freshnessSensitivity: 0.65,
-    });
+    expect(getCropPricing({ id: "custom-crop", name: "Custom crop", symbol: "CST" })).toMatchObject(
+      {
+        id: "custom-crop",
+        name: "Custom crop",
+        freshnessSensitivity: 0.65,
+      },
+    );
     expect(
-      getCropPricing({ id: "beets", name: "Beets", symbol: "BET", freshnessSensitivity: 0.4 })
-        .freshnessSensitivity,
+      getCropPricing({
+        id: "custom-crop",
+        name: "Custom crop",
+        symbol: "CST",
+        freshnessSensitivity: 0.4,
+      }).freshnessSensitivity,
     ).toBe(0.4);
   });
 });
@@ -276,7 +282,9 @@ describe("pricing integrated into the saved seven-day game", () => {
     expect(next.transactions).toEqual(sold.transactions);
     expect(next.pricing!.history).toHaveLength(2);
     expect(next.pricing!.history[0]).toEqual(original.pricing!.history[0]);
-    expect(Object.keys(next.pricing!.history[1].crops)).toHaveLength(5);
+    expect(Object.keys(next.pricing!.history[1].crops)).toHaveLength(
+      Object.keys(CROP_PRICING).length,
+    );
     expect(getMarketHistory(next).map((d) => d.day)).toEqual([1, 2]);
   });
   it("persists demand, shocks, quotes and historical order prices across reloads", () => {

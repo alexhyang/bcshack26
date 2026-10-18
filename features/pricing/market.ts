@@ -1,3 +1,4 @@
+import { getGameCrop } from "@/data/crops";
 import type { MarketDataProvider } from "@/data/market-provider";
 import { marketProvider } from "@/data/simulated-provider";
 import type { GameState, MarketDay, MarketEvent } from "@/types/game";
@@ -111,7 +112,7 @@ export function advancePricing(
     ],
   };
 }
-export function getCurrentCropMarket(state: GameState, cropId = marketProvider.crop.id) {
+export function getCurrentCropMarket(state: GameState, cropId = getGameCrop(state).id) {
   return state.pricing?.history.find((snapshot) => snapshot.day === state.day)?.crops[cropId];
 }
 function eventWithCurrentOffer(event: MarketEvent, offers: MarketDay["offers"]): MarketEvent {
@@ -153,8 +154,9 @@ export function priceMarketDay(
   if (!state.pricing || rawDay.day < state.pricing.startedDay) return scenarioMarket(state, rawDay);
   const snapshot = state.pricing.history.find((s) => s.day === rawDay.day);
   if (!snapshot) throw new Error("No revealed market snapshot exists for this day.");
-  const cropMarket = snapshot.crops[provider.crop.id];
-  const crop = getCropPricing(provider.crop);
+  const selectedCrop = getGameCrop(state, provider.crop);
+  const cropMarket = snapshot.crops[selectedCrop.id];
+  const crop = getCropPricing(selectedCrop);
   const freshness = rawDay.day === state.day ? state.freshness : snapshot.freshness;
   const offers = rawDay.offers.map((offer) => {
     const pricing = calculateFinalPrice({

@@ -3134,3 +3134,71 @@ td:last-child {
     gap: 8px;
   }
 }
+
+.harvest-selector {
+  flex: 1;
+  min-width: 0;
+}
+.harvest-fields {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.harvest-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #a8b8c9;
+  font-size: 11px;
+}
+.harvest-fields select,
+.harvest-fields input {
+  min-height: 36px;
+  border: 1px solid #344556;
+  border-radius: 7px;
+  background: #111d2a;
+  padding: 7px 10px;
+  color: #e7edf5;
+  font-size: 13px;
+}
+.harvest-fields select {
+  max-width: 210px;
+}
+.harvest-fields input {
+  width: 145px;
+}
+.harvest-help,
+.harvest-selector > p {
+  margin-top: 8px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #8ca0b3;
+}
+.chart-toolbar:has(.harvest-selector) {
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+}
+.scenario-cards.has-selection {
+  display: flex;
+  justify-content: center;
+}
+.scenario-cards.has-selection .scenario-card.revealed {
+  flex: 0 1 480px;
+  width: 100%;
+  margin-inline: auto;
+}
+@media (max-width: 600px) {
+  .harvest-fields {
+    gap: 10px;
+  }
+  .harvest-fields select {
+    max-width: 100%;
+    width: 100%;
+  }
+  .harvest-fields label:first-child {
+    flex: 1;
+    min-width: 140px;
+  }
+}

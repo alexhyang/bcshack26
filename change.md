@@ -72,3 +72,12 @@
 - Omitted zero-price observations from chart lines, fill, and tooltips. Closed buyers leave gaps instead of drawing zero-price drops.
 - Automatically fit the vertical axis to positive prices in the selected period and visible channels, with a small margin so lines fill the chart area.
 - Validation: TypeScript typecheck and ESLint passed.
+
+## Crop and harvest selection; centered scenario reveal
+
+- Replaced the fixed Carrots label with a grouped dropdown of 42 crops grown in Canada, including vegetables, fruit and berries, grains and oilseeds, and pulses.
+- Added a starting harvest input in kilograms and Apply harvest action. Farmers can configure the harvest on Day 1 before the first trade; reset keeps the selected crop and starting kilograms and unlocks editing again.
+- Selected crops drive the playable pricing model, chart, portfolio, initial inventory, result percentages, and wholesale benchmark. Selections persist and restore with validated saves; prior carrot seasons remain compatible.
+- Crop references remain fictional simulator prices. The seven-day schedule, buyer capacities, costs, demand, spoilage, and scenario rules keep their existing behavior.
+- Once a scenario is picked, removed both unselected cards and centered the revealed card with its channel effects.
+- Validation: 228 tests passed; TypeScript typecheck, ESLint, and the production build passed. Browser checks confirmed a 2,500 kg apple harvest updates quotes and inventory, survives reload, and keeps only the selected scenario card centered.

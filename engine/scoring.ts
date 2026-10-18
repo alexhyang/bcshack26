@@ -1,3 +1,4 @@
+import { getGameCrop } from "@/data/crops";
 import type { GameState, FinalScore } from "@/types/game";
 import type { MarketDataProvider } from "@/data/market-provider";
 import { marketProvider } from "@/data/simulated-provider";
@@ -19,7 +20,10 @@ export function scoreGame(
       : provider.getDay(1);
   const wholesale = opening.offers.find((o) => o.id === "wholesaler")!;
   // The demo's Day 1 wholesaler can buy the entire initial harvest in one order.
-  const baseline = previewOrder(wholesale, provider.crop.initialInventory).netReturn;
+  const baseline = previewOrder(
+    wholesale,
+    getGameCrop(state, provider.crop).initialInventory,
+  ).netReturn;
   const netMargin = round(state.grossRevenue - state.sellingCosts - state.storageCosts);
   const baselineDifference = round(netMargin - baseline);
   const channels = new Set(state.transactions.map((t) => t.buyerId)).size;
@@ -45,7 +49,7 @@ export function scoreGame(
     spoiled: state.spoiled,
     unsold: state.inventory,
     wastedOrUnsold: round(state.spoiled + state.inventory),
-    soldPercent: round((sold / provider.crop.initialInventory) * 100),
+    soldPercent: round((sold / getGameCrop(state, provider.crop).initialInventory) * 100),
     baseline,
     baselineDifference,
     takeaways,

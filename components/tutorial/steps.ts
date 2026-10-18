@@ -18,7 +18,7 @@ export const tutorialSteps: readonly TutorialStep[] = [
     label: "Your harvest",
     title: "This is your farm at a glance.",
     description:
-      "These cards track cash, net selling margin, remaining carrots, and freshness. A new season starts with 1,000 kg, $0, and seven days to sell.",
+      "These cards track cash, net selling margin, remaining produce, and freshness. Choose your crop and starting kilograms on the chart before your first trade. You have seven days to sell.",
     hint: "This is your actual saved game. The tour only shows you around; it never sells stock or advances a day.",
   },
   {
@@ -78,8 +78,8 @@ export const tutorialSteps: readonly TutorialStep[] = [
     label: "Sell or hold",
     title: "Done for today? Move to the next session.",
     description:
-      "Use Next Market Day after making your sales. The confirmation shows storage expenses and expected spoilage before you commit. Holding stock costs money and leaves fewer carrots to sell.",
-    hint: "You can still trade on Day 7. That day this button becomes End season. Unsold carrots have $0 salvage value.",
+      "Use Next Market Day after making your sales. The confirmation shows storage expenses and expected spoilage before you commit. Holding stock costs money and leaves fewer produce to sell.",
+    hint: "You can still trade on Day 7. That day this button becomes End season. Unsold produce have $0 salvage value.",
   },
   {
     id: "history",

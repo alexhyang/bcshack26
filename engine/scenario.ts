@@ -43,7 +43,7 @@ export const SCENARIO_EVENTS: readonly ScenarioEvent[] = [
     "frost",
     "Frost across the valley",
     "Weather",
-    "Frost damages competing harvests. Buyers bid more for the smaller supply of fresh carrots.",
+    "Frost damages competing harvests. Buyers bid more for the smaller supply of fresh produce.",
     1.25,
     1.2,
     1.15,
@@ -105,7 +105,7 @@ export const SCENARIO_EVENTS: readonly ScenarioEvent[] = [
     "imports",
     "Emergency import restrictions",
     "Government policy",
-    "An inspection order delays imported vegetables. Local carrots become more valuable across the market.",
+    "An inspection order delays imported vegetables. Local produce become more valuable across the market.",
     1.3,
     1.2,
     1.15,
@@ -125,7 +125,7 @@ export const SCENARIO_EVENTS: readonly ScenarioEvent[] = [
     "heat",
     "A heatwave changes the menu",
     "Weather",
-    "Diners favour cold meals and restaurants buy fewer carrots. Grocery shoppers still stock up, but overall demand weakens.",
+    "Diners favour cold meals and restaurants buy fewer produce. Grocery shoppers still stock up, but overall demand weakens.",
     0.9,
     1.05,
     0.8,
@@ -143,9 +143,9 @@ export const SCENARIO_EVENTS: readonly ScenarioEvent[] = [
 
   event(
     "promotion",
-    "Supermarkets promote carrot week",
+    "Supermarkets promote local crop week",
     "Demand",
-    "A grocery campaign drives shoppers to carrot recipes. Retail buyers compete for extra stock.",
+    "A grocery campaign drives shoppers to seasonal recipes. Retail buyers compete for extra stock.",
     1.1,
     1.35,
     1.02,
@@ -274,7 +274,7 @@ export const SCENARIO_CHANNEL_REASONS: Record<string, Record<BuyerId, string>> =
   frost: {
     wholesaler: "Harvest losses tighten bulk supply.",
     retailer: "Scarcer fresh stock raises grocery bids.",
-    restaurant: "Kitchens compete for fewer local carrots.",
+    restaurant: "Kitchens compete for fewer local produce.",
   },
   rain: {
     wholesaler: "Weaker dining demand reduces bulk orders.",
@@ -294,12 +294,12 @@ export const SCENARIO_CHANNEL_REASONS: Record<string, Record<BuyerId, string>> =
   festival: {
     wholesaler: "Festival orders lift bulk demand.",
     retailer: "Extra visitors lift grocery sales slightly.",
-    restaurant: "Festival meals drive a surge in carrot orders.",
+    restaurant: "Festival meals drive a surge in produce orders.",
   },
   bumper: {
     wholesaler: "A flood of bulk supply lowers bids.",
     retailer: "Stores have more farms to buy from.",
-    restaurant: "Abundant carrots give kitchens cheaper options.",
+    restaurant: "Abundant produce give kitchens cheaper options.",
   },
   imports: {
     wholesaler: "Delayed imports tighten bulk supply.",
@@ -314,7 +314,7 @@ export const SCENARIO_CHANNEL_REASONS: Record<string, Record<BuyerId, string>> =
   heat: {
     wholesaler: "Lower overall demand softens bulk bids.",
     retailer: "Households continue stocking groceries.",
-    restaurant: "Lighter summer menus use fewer carrots.",
+    restaurant: "Lighter summer menus use fewer produce.",
   },
   bridge: {
     wholesaler: "Delayed freight tightens incoming supply.",
@@ -323,7 +323,7 @@ export const SCENARIO_CHANNEL_REASONS: Record<string, Record<BuyerId, string>> =
   },
   promotion: {
     wholesaler: "Store restocking lifts bulk demand.",
-    retailer: "Carrot promotions drive a surge in sales.",
+    retailer: "Produce promotions drive a surge in sales.",
     restaurant: "Competition for stock nudges bids up slightly.",
   },
   reopen: {

@@ -1,3 +1,4 @@
+import { EXTRA_CROP_PRICING } from "@/data/crops";
 import type { BuyerId, Crop } from "@/types/game";
 import type { CropPricingConfig, DemandBucket } from "./types";
 
@@ -71,6 +72,7 @@ export const CROP_PRICING: Readonly<Record<string, CropPricingConfig>> = {
     shockMin: 0.01,
     shockMax: 0.04,
   },
+  ...EXTRA_CROP_PRICING,
 };
 export function getCropPricing(
   crop: Pick<Crop, "id" | "name" | "symbol" | "freshnessSensitivity">,

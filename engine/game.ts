@@ -10,12 +10,13 @@ import { DEFAULT_MARKET_SEED } from "@/features/pricing/config";
 
 export function createInitialState(
   provider: MarketDataProvider = marketProvider,
-  options: { seed?: number; dynamicPricing?: boolean } = {},
+  options: { seed?: number; dynamicPricing?: boolean; harvest?: GameState["harvest"] } = {},
 ): GameState {
   const initial: GameState = {
+    ...(options.harvest ? { harvest: options.harvest } : {}),
     scenarioId: provider.scenarioId,
     day: 1,
-    inventory: provider.crop.initialInventory,
+    inventory: options.harvest?.initialInventory ?? provider.crop.initialInventory,
     freshness: 100,
     cash: 0,
     grossRevenue: 0,
@@ -51,7 +52,7 @@ export function advanceDay(
     feedback =
       state.inventory > 0
         ? `The season closed with ${state.inventory} kg unsold. Unsold inventory has no salvage value in this simulation.`
-        : "Every saleable carrot found a buyer. Compare your selling margin with the Day 1 baseline.";
+        : "Every saleable kilogram found a buyer. Compare your selling margin with the Day 1 baseline.";
   else if (state.inventory === 0)
     feedback = `You sold ${sold} kg today and have no stock left to store. You avoided further holding costs and spoilage.`;
   else

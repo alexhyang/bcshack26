@@ -9,7 +9,7 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
-import { marketProvider } from "@/data/simulated-provider";
+import { getGameCrop } from "@/data/crops";
 import { scenarioPending } from "@/engine/scenario";
 import { CROP_PRICING, getCropPricing } from "../config";
 import { getCurrentCropMarket, getMarketForGame } from "../market";
@@ -33,7 +33,7 @@ export function MarketMovement({ change }: { change: number }) {
 export function PriceBreakdown({ game }: { game: GameState }) {
   const current = getCurrentCropMarket(game);
   if (!current) return null;
-  const crop = getCropPricing(marketProvider.crop);
+  const crop = getCropPricing(getGameCrop(game));
   const market = getMarketForGame(game);
   const offers = (["restaurant", "retailer", "wholesaler"] as const).map((channel) => {
     const offer = market.offers.find((o) => o.id === channel)!;
@@ -157,7 +157,7 @@ export function PriceBreakdown({ game }: { game: GameState }) {
                 Other crop markets <span>SIMULATED · NO INVENTORY</span>
               </h3>
               {Object.values(CROP_PRICING)
-                .filter((c) => c.id !== crop.id)
+                .filter((c) => c.id !== crop.id && snapshots.crops[c.id])
                 .map((c) => {
                   const market = snapshots.crops[c.id];
                   return (
@@ -175,7 +175,7 @@ export function PriceBreakdown({ game }: { game: GameState }) {
                 })}
               <p>
                 Each crop gets independent demand rolls for each channel and its own market shock
-                roll. Carrots remain the playable crop in this season.
+                roll. Only your selected crop has playable inventory.
               </p>
             </div>
             <DialogClose asChild>

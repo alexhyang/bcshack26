@@ -63,8 +63,9 @@ export function Header({
           <DialogContent>
             <DialogTitle className="text-xl font-semibold">Start with a fresh harvest?</DialogTitle>
             <DialogDescription className="mt-3 text-sm leading-6 text-slate-400">
-              This replaces your saved season, including all trades, with 1,000 kg of carrots on Day
-              1.
+              This replaces your saved season and all trades with a fresh harvest of your current
+              crop and starting kilograms on Day 1. You can then choose a different crop or harvest
+              size.
             </DialogDescription>
             <div className="mt-6 flex justify-end gap-3">
               <DialogClose asChild>

@@ -10,9 +10,11 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { ChartNoAxesCombined, ChevronDown, Info } from "lucide-react";
+import { ChartNoAxesCombined, Info } from "lucide-react";
 import { getMarketHistory } from "@/features/pricing/market";
 import type { GameState } from "@/types/game";
+import { HarvestSelector } from "./HarvestSelector";
+import { getGameCrop } from "@/data/crops";
 import { MarketWatch, CHANNEL_COLORS } from "./MarketWatch";
 
 // A zero quote represents an unavailable buyer, not a market price observation.
@@ -23,6 +25,7 @@ const chartPrice = (value: number) => {
 
 export function PriceChart({ game }: { game: GameState }) {
   const day = game.day;
+  const crop = getGameCrop(game);
   const [range, setRange] = useState("ALL");
   const [visible, setVisible] = useState({ wholesaler: true, retailer: true, restaurant: true });
   const points = useMemo(() => {
@@ -67,12 +70,7 @@ export function PriceChart({ game }: { game: GameState }) {
         <span className="subtle-label">CAD / kg</span>
       </div>
       <div className="chart-toolbar">
-        <div className="crop-symbol">
-          <span className="symbol-box">CRT</span>
-          <strong>Carrots</strong>
-          <span className="subtle-label">/ CAD</span>
-          <ChevronDown size={13} className="text-slate-500" />
-        </div>
+        <HarvestSelector key={`${crop.id}-${crop.initialInventory}`} game={game} />
         <div className="range-buttons" aria-label="Chart period">
           {["1D", "3D", "ALL"].map((period) => (
             <button
@@ -90,7 +88,7 @@ export function PriceChart({ game }: { game: GameState }) {
       <div
         className="price-chart"
         role="img"
-        aria-label={`Simulated carrot prices through day ${day}. Use channel buttons to toggle lines; current prices are listed above.`}
+        aria-label={`Simulated ${crop.name.toLowerCase()} prices through day ${day}. Use channel buttons to toggle lines; current prices are listed above.`}
       >
         <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <ComposedChart data={points} margin={{ top: 14, right: 4, left: -14, bottom: 0 }}>

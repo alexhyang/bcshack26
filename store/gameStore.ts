@@ -6,11 +6,14 @@ import { createInitialState, advanceDay } from "@/engine/game";
 import { executeSale } from "@/engine/trading";
 import { marketProvider } from "@/data/simulated-provider";
 import { restoreGame } from "@/engine/saves";
+import { validHarvest } from "@/data/crops";
 import { createMarketSeed } from "@/features/pricing/random";
-const freshSeason = () => createInitialState(marketProvider, { seed: createMarketSeed() });
+const freshSeason = (harvest?: GameState["harvest"]) =>
+  createInitialState(marketProvider, { seed: createMarketSeed(), harvest });
 
 import { prepareScenario, chooseScenario } from "@/engine/scenario";
 interface GameStore {
+  configureHarvest: (cropId: string, quantity: number) => GameResult;
   dealScenario: () => void;
   pickScenario: (index: number) => void;
   game: GameState;
@@ -23,6 +26,23 @@ export const useGameStore = create<GameStore>()(
   persist(
     (set, get) => ({
       game: freshSeason(),
+      configureHarvest: (cropId, quantity) => {
+        const current = get().game;
+        if (current.day !== 1 || current.completed || current.transactions.length > 0)
+          return { ok: false, error: "Start a new season to change your harvest after trading." };
+        const harvest = { cropId, initialInventory: quantity };
+        if (!validHarvest(harvest))
+          return {
+            ok: false,
+            error: "Choose a crop and enter 0.01–100,000,000 kg, using at most two decimal places.",
+          };
+        const game = {
+          ...createInitialState(marketProvider, { seed: current.pricing?.seed, harvest }),
+          dailyScenarios: current.dailyScenarios,
+        };
+        set({ game });
+        return { ok: true, state: game };
+      },
       dealScenario: () => set({ game: prepareScenario(get().game) }),
       pickScenario: (index) => {
         const result = chooseScenario(get().game, index);
@@ -45,7 +65,7 @@ export const useGameStore = create<GameStore>()(
 
         return result;
       },
-      reset: () => set({ game: freshSeason() }),
+      reset: () => set({ game: freshSeason(get().game.harvest) }),
     }),
     {
       name: "farmstreet-save",

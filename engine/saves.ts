@@ -1,3 +1,4 @@
+import { validHarvest } from "@/data/crops";
 import { SCENARIO_EVENTS } from "./scenario";
 import { marketProvider } from "@/data/simulated-provider";
 import { advanceDay, createInitialState } from "./game";
@@ -23,6 +24,7 @@ export function restoreGame(value: unknown): GameState {
     saved.transactions.length > marketProvider.duration * 3
   )
     return initial;
+  if (saved.harvest !== undefined && !validHarvest(saved.harvest)) return initial;
   const transactions = saved.transactions;
   if (
     transactions.some((trade: unknown) => {
@@ -57,7 +59,10 @@ export function restoreGame(value: unknown): GameState {
       pricing.legacyTransactionCount > transactions.length)
   )
     return initial;
-  let state = createInitialState(marketProvider, { dynamicPricing: false });
+  let state = createInitialState(marketProvider, {
+    dynamicPricing: false,
+    ...(saved.harvest ? { harvest: saved.harvest as GameState["harvest"] } : {}),
+  });
   let index = 0;
   if (saved.dailyScenarios !== undefined) {
     if (

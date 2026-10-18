@@ -1,6 +1,6 @@
 # FarmStreet 🌱
 
-A complete, browser-local agricultural market simulator. Take a fictional 1,000 kg carrot harvest through seven Canadian market sessions: compare buyers, sell or hold inventory, absorb storage and spoilage costs, and review your strategy against an immediate-sale baseline.
+A complete, browser-local agricultural market simulator. Choose from 42 Canadian-grown crops and set your starting harvest in kilograms, then take it through seven Canadian market sessions: compare buyers, sell or hold inventory, absorb storage and spoilage costs, and review your strategy against an immediate-sale baseline.
 
 All prices, buyers, news, weather, and market conditions are **simulated**. No accounts, API keys, real trades, payments, or backend are involved.
 
@@ -50,7 +50,7 @@ Today’s buyer cards highlight the highest net return **per kg at each buyer’
 - Freshness reduces buyer prices through the centralized crop- and channel-specific pricing formula. Spoilage independently removes kilograms from inventory. The existing freshness value is reused; there is no second freshness clock.
 - Remaining inventory after the final session has **zero salvage value**. Results list spoiled and unsold quantities separately and in total.
 - Production costs are excluded. **Net selling margin is not full farm profit.**
-- Baseline: sell all 1,000 kg to the Day 1 wholesaler under the same opening conditions, after delivery and handling. Medium demand at the $1.12 market reference gives **$976**; new seasons can have a different baseline because opening demand is randomized. The benchmark excludes the random scenario card so a wholesale shutdown does not create an impossible comparison. Migrated seasons with original trades retain their original $976 baseline.
+- Baseline: sell the entire starting harvest (1,000 kg in the default season) to the Day 1 wholesaler under the same opening conditions, after delivery and handling. Medium demand at the $1.12 market reference gives **$976**; new seasons can have a different baseline because opening demand is randomized. The benchmark excludes the random scenario card so a wholesale shutdown does not create an impossible comparison. Migrated seasons with original trades retain their original $976 baseline.
 
 The scenario retains its restaurant capacity surge, bumper harvest, highway closure, grocery promotion, extreme heat, and supply shortage. Capacity, delivery/storage expenses, and spoilage remain driven by the existing scenario. Buyer prices now come from one formula: **market base × channel × freshness × demand × daily scenario**. Daily shocks update the market base; the revealed card applies its multiplier once and can close a buyer for that day. No future events or prices appear in the UI.
 
@@ -60,7 +60,7 @@ The feature is organized under [`features/pricing/`](features/pricing/README.md)
 
 - Open **Show Price Breakdown** above today’s buyer cards to compare every multiplier and the highest quoted price per kg.
 - The market strip shows the current base price, actual daily base-price movement, and a HIGH/MEDIUM/LOW demand badge. Buyer quote movements in the chart also include freshness and demand.
-- The breakdown contains a read-only market watch for lettuce, tomatoes, strawberries, and potatoes. All five crops receive independent daily demand and shock rolls; carrots remain the playable crop.
+- The breakdown contains a read-only market watch for lettuce, tomatoes, strawberries, and potatoes. All configured crops receive independent daily demand and shock rolls; your selected crop is playable.
 - **Next Market Day** uses the existing day action, applies holding costs and freshness decay, generates one new saved market snapshot, and recalculates all quotes. Day 7 still ends through **End season**.
 - New seasons get a random seed. Their market history is reproducible from that seed and does not reroll on rendering, trading, reopening the breakdown, or reloading.
 - Existing saves migrate on load. Already executed transactions, balances, inventory, freshness, and day recaps retain their values. Dynamic pricing starts on the saved current day for subsequent orders. A legacy order already placed today still consumes that buyer’s one order for today.
@@ -127,7 +127,7 @@ You can also run `npx vercel` from the repository if you already have a Vercel a
 
 ## MVP scope
 
-One playable crop, five simulated crop markets, a seven-day scenario with seeded market variation, three fictional buyer channels, and browser-local saves. Each order settles immediately; there are no in-transit shipments, financing costs, full production budgets, or inventory purchases. Refreshing preserves progress within the same browser and origin; saves do not sync between devices. If localStorage is blocked, the game remains playable in memory and displays a warning.
+One selected playable crop from 42 simulated crop markets, a seven-day scenario with seeded market variation, three fictional buyer channels, and browser-local saves. Each order settles immediately; there are no in-transit shipments, financing costs, full production budgets, or inventory purchases. Refreshing preserves progress within the same browser and origin; saves do not sync between devices. If localStorage is blocked, the game remains playable in memory and displays a warning.
 
 Built with Next.js App Router, React, TypeScript, Tailwind CSS v4, shadcn/ui patterns with Radix primitives, Recharts, Zustand persist, Lucide, and Vitest. The lockfile records the installed dependency versions.
 
@@ -136,3 +136,7 @@ Built with Next.js App Router, React, TypeScript, Tailwind CSS v4, shadcn/ui pat
 At the start of every day, choose one of three randomly dealt face-down cards in the Scenario module. The chosen event applies only for that day; the other cards stay hidden. Trading and advancing are locked until a card is revealed.
 Twelve fictional events cover frost, rain, heatwaves, a public-holiday restaurant shutdown, a wholesale strike, a food festival, bumper harvests, import restrictions and resumptions, school lunches, bridge closures, and supermarket promotions. Each event sets a separate price multiplier for wholesalers, retailers, and restaurants. Closed channels have zero buying capacity. Displayed prices, sale previews, transactions, and historical charts use the same adjusted daily prices; delivery costs are unchanged.
 Hands and choices are saved with the season and validated when restoring orders. Reloading keeps the same draw. Older saved games retain original prices for days already traded; scenario cards begin with the next untraded session. Edit `engine/scenario.ts` to add events or tune their illustrative multipliers.
+
+### Choose your harvest
+
+Use the Crop dropdown and Starting harvest (kg) field above the price chart, then select Apply harvest before your first trade. Choose from vegetables, fruit and berries, grains and oilseeds, or pulses. The crop and amount are saved with your season. Reset starts the same harvest again and lets you edit it before trading. Existing buyer capacities and game rules still apply.
