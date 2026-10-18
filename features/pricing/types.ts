@@ -25,6 +25,7 @@ export interface PriceBreakdown {
   finalPrice: number;
 }
 export interface CropMarketSnapshot {
+  channelDemand?: Record<BuyerId, DemandBucket>;
   cropId: string;
   marketPrice: number;
   demand: DemandBucket;
@@ -39,7 +40,9 @@ export interface MarketSnapshot {
   crops: Record<string, CropMarketSnapshot>;
 }
 export interface DynamicPricingState {
-  version: 1;
+  version: 1 | 2;
+  /** First day with independent channel demand. Earlier quotes keep the legacy model. */
+  channelDemandStartedDay?: number;
   seed: number;
   startedDay: number;
   /** Preserve these already executed orders at the original scenario's prices. */

@@ -107,3 +107,9 @@ npm run build
 Carrots remain the single playable inventory from the existing MVP. All five configured crops have real daily demand/shock snapshots and appear in the read-only market watch. Add playable inventories separately if expanding gameplay later. Unknown existing crops get a default sensitivity of 0.65 (or their existing explicit value) and conservative default volatility rather than being removed.
 
 Balance parameters are centralized in `config.ts`. Future balance changes should version the pricing/save rules before changing the interpretation of historical seeded seasons. No authentication, payments, network data, or extra persistence backend is involved.
+
+### Channel-specific demand (pricing version 2)
+
+Each crop rolls demand independently for wholesalers, retailers, and restaurants every day. Each roll uses 25% high (×1.20), 50% medium (×1.00), and 25% low (×0.85). Demand levels can coincide or move in opposite directions; they are not forced to differ. Offers show their channel demand, and the price breakdown compares all three.
+
+Separate seeded demand rolls leave the existing market-shock sequence unchanged. Version 1 saves replay under the old shared-demand model, then adopt channel demand on the next day. The first channel-demand day is saved so historical prices and executed orders remain stable across reloads.

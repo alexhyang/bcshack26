@@ -57,3 +57,12 @@
 - Integrated scenario summaries and 50% peaceful-day draws with the remote dynamic-pricing module.
 - Preserved the scenario identifier used to prevent double application of price multipliers; updated the peaceful-day test to compare unchanged buyer offers while allowing this metadata.
 - All 108 tests passed after integration, along with TypeScript typecheck and ESLint.
+
+## Independent daily demand by buyer channel
+
+- Wholesalers, retailers, and restaurants now roll demand independently for each crop and day: high (25%, ×1.20), medium (50%, ×1.00), or low (25%, ×0.85).
+- A high-demand wholesaler and low-demand restaurant can occur on the same day. Channel demand feeds the same quotes, previews, orders, and history used by the pricing model.
+- Added channel demand badges to buyer cards and separate demand levels in the price breakdown.
+- Versioned demand simulation preserves prior saved quotes and transactions. Existing seasons adopt independent channel demand starting the next day; new seasons use it immediately. Seeded rolls remain stable on reload.
+
+- Validation: all 110 tests passed, including opposite channel-demand levels and legacy-save migration; TypeScript typecheck and ESLint passed.

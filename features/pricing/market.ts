@@ -4,7 +4,7 @@ import type { GameState, MarketDay, MarketEvent } from "@/types/game";
 import { CROP_PRICING, DEFAULT_MARKET_SEED, PRICE_LIMITS, getCropPricing } from "./config";
 import { calculateFinalPrice } from "./pricing";
 import { createSeededRandom } from "./random";
-import { generateCropMarket } from "./simulation";
+import { generateDemand, generateCropMarket } from "./simulation";
 import type { DynamicPricingState, MarketSnapshot } from "./types";
 import { money } from "@/lib/utils";
 import { scenarioMarket } from "@/engine/scenario";
@@ -15,6 +15,7 @@ function generateSnapshot(
   seed: number,
   previous: MarketSnapshot | undefined,
   provider: MarketDataProvider,
+  channelDemandEnabled: boolean,
 ): MarketSnapshot {
   const random = createSeededRandom((seed ^ Math.imul(day, 0x9e3779b1)) >>> 0);
   const configs = { ...CROP_PRICING, [provider.crop.id]: getCropPricing(provider.crop) };
@@ -24,7 +25,25 @@ function generateSnapshot(
     crops: Object.fromEntries(
       Object.values(configs).map((crop) => [
         crop.id,
-        generateCropMarket(crop, previous?.crops[crop.id], random),
+        (() => {
+          const snapshot = generateCropMarket(crop, previous?.crops[crop.id], random);
+          if (channelDemandEnabled) {
+            // A separate stream preserves historical market shock rolls.
+            const cropHash = [...crop.id].reduce(
+              (hash, char) => Math.imul(hash, 31) + char.charCodeAt(0),
+              0,
+            );
+            const demandRandom = createSeededRandom(
+              (seed ^ Math.imul(day, 0x85ebca6b) ^ cropHash) >>> 0,
+            );
+            snapshot.channelDemand = {
+              wholesaler: generateDemand(demandRandom),
+              retailer: generateDemand(demandRandom),
+              restaurant: generateDemand(demandRandom),
+            };
+          }
+          return snapshot;
+        })(),
       ]),
     ),
   };
@@ -34,9 +53,18 @@ export function enableDynamicPricing(
   seed = DEFAULT_MARKET_SEED,
   legacyTransactionCount = 0,
   provider: MarketDataProvider = marketProvider,
+  demandModel: { version: 1 | 2; startedDay?: number } = { version: 2 },
 ): GameState {
   if (provider.mode === "live") return state;
-  const snapshot = generateSnapshot(state.day, state.freshness, seed, undefined, provider);
+  const channelDemandStartedDay = demandModel.startedDay ?? state.day;
+  const snapshot = generateSnapshot(
+    state.day,
+    state.freshness,
+    seed,
+    undefined,
+    provider,
+    demandModel.version === 2 && state.day >= channelDemandStartedDay,
+  );
   // A migrated season starts from its current original wholesale reference;
   // historical orders and balances remain unchanged.
   if (state.day > 1)
@@ -50,7 +78,8 @@ export function enableDynamicPricing(
   return {
     ...state,
     pricing: {
-      version: 1,
+      version: demandModel.version,
+      ...(demandModel.version === 2 ? { channelDemandStartedDay } : {}),
       seed: seed >>> 0,
       startedDay: state.day,
       legacyTransactionCount,
@@ -71,7 +100,14 @@ export function advancePricing(
     ...pricing,
     history: [
       ...pricing.history,
-      generateSnapshot(day, freshness, pricing.seed, previous, provider),
+      generateSnapshot(
+        day,
+        freshness,
+        pricing.seed,
+        previous,
+        provider,
+        pricing.version === 2 && day >= (pricing.channelDemandStartedDay ?? pricing.startedDay),
+      ),
     ],
   };
 }
@@ -81,7 +117,7 @@ export function getCurrentCropMarket(state: GameState, cropId = marketProvider.c
 function eventWithCurrentOffer(event: MarketEvent, offers: MarketDay["offers"]): MarketEvent {
   const offer = (id: string) => offers.find((o) => o.id === id)!;
   const changes: Record<string, Partial<MarketEvent>> = {
-    opening: { impact: "All channels share today’s crop demand; compare their net returns" },
+    opening: { impact: "Each channel has its own daily demand; compare their net returns" },
     dining: {
       explanation:
         "More diners expand restaurant purchasing capacity. The current price still depends on market movement, crop demand, and freshness.",
@@ -126,7 +162,7 @@ export function priceMarketDay(
       channel: offer.id,
       marketPrice: cropMarket.marketPrice,
       freshness,
-      demand: cropMarket.demand,
+      demand: cropMarket.channelDemand?.[offer.id] ?? cropMarket.demand,
     });
     return { ...offer, price: pricing.finalPrice, pricing };
   });

@@ -9,7 +9,12 @@ import {
 import { calculateFinalPrice, calculateFreshnessMultiplier, compareBuyerOffers } from "../pricing";
 import { createSeededRandom, weightedRandom } from "../random";
 import { generateDemand, generatePriceShock } from "../simulation";
-import { getCurrentCropMarket, getMarketForGame, getMarketHistory } from "../market";
+import {
+  enableDynamicPricing,
+  getCurrentCropMarket,
+  getMarketForGame,
+  getMarketHistory,
+} from "../market";
 import { advanceDay, createInitialState } from "@/engine/game";
 import { executeSale, previewOrder } from "@/engine/trading";
 import { scoreGame } from "@/engine/scoring";
@@ -234,8 +239,10 @@ describe("pricing integrated into the saved seven-day game", () => {
     }
     const sold = stateOf(executeSale(state, marketProvider.getDay(1), "restaurant", 100));
     expect(JSON.stringify(sold.pricing)).toBe(before);
-    const demand = getCurrentCropMarket(state)!.demand;
-    expect(getMarketForGame(state).offers.every((o) => o.pricing?.demand === demand)).toBe(true);
+    const demands = getCurrentCropMarket(state)!.channelDemand!;
+    expect(getMarketForGame(state).offers.every((o) => o.pricing?.demand === demands[o.id])).toBe(
+      true,
+    );
   });
   it("uses the same computed quote in display, preview, and execution", () => {
     const state = { ...seedState(), freshness: 80 };
@@ -359,5 +366,39 @@ describe("opening-market persistence", () => {
     } finally {
       vi.unstubAllGlobals();
     }
+  });
+});
+
+describe("independent channel demand", () => {
+  it("can give wholesalers high demand while restaurants have low demand on the same day", () => {
+    const states = Array.from({ length: 100 }, (_, seed) => seedState(seed));
+    const state = states.find((state) => {
+      const demands = getCurrentCropMarket(state)!.channelDemand!;
+      return demands.wholesaler === "high" && demands.restaurant === "low";
+    });
+    expect(state).toBeDefined();
+    const offers = getMarketForGame(state!).offers;
+    expect(offers.find((o) => o.id === "wholesaler")!.pricing!.demandMultiplier).toBe(1.2);
+    expect(offers.find((o) => o.id === "restaurant")!.pricing!.demandMultiplier).toBe(0.85);
+    expect(getMarketForGame(restoreGame(state))).toEqual(getMarketForGame(state!));
+  });
+  it("preserves legacy orders and quotes and enables channel demand on the next day", () => {
+    const legacy = enableDynamicPricing(
+      createInitialState(marketProvider, { dynamicPricing: false }),
+      321,
+      0,
+      marketProvider,
+      { version: 1 },
+    );
+    const sold = stateOf(executeSale(legacy, marketProvider.getDay(1), "retailer", 100));
+    const migrated = restoreGame(JSON.parse(JSON.stringify(sold)));
+    expect(migrated.transactions).toEqual(sold.transactions);
+    expect(migrated.cash).toBe(sold.cash);
+    expect(getMarketForGame(migrated)).toEqual(getMarketForGame(sold));
+    expect(migrated.pricing!.channelDemandStartedDay).toBe(2);
+    const next = stateOf(advanceDay(migrated));
+    expect(getCurrentCropMarket(next)!.channelDemand).toBeDefined();
+    expect(getMarketHistory(next)[0]).toEqual(getMarketHistory(sold)[0]);
+    expect(restoreGame(JSON.parse(JSON.stringify(next)))).toEqual(next);
   });
 });

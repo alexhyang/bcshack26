@@ -61,7 +61,7 @@ export function PriceBreakdown({ game }: { game: GameState }) {
           </strong>
           <MarketMovement change={current.changePercent} />
         </div>
-        <DemandBadge demand={current.demand} />
+        <span className="channel-demand-label">Demand varies by channel</span>
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm">
@@ -94,7 +94,7 @@ export function PriceBreakdown({ game }: { game: GameState }) {
               </div>
               <div>
                 <span>Day {game.day} demand</span>
-                <DemandBadge demand={current.demand} />
+                <strong>See each channel below</strong>
               </div>
             </div>
             <p className="pricing-scroll-hint">
@@ -113,6 +113,14 @@ export function PriceBreakdown({ game }: { game: GameState }) {
                   </tr>
                 </thead>
                 <tbody>
+                  <tr>
+                    <td>Daily demand</td>
+                    {offers.map((o) => (
+                      <td key={o.channel}>
+                        <DemandBadge demand={o.demand} />
+                      </td>
+                    ))}
+                  </tr>
                   {rows.map((row) => (
                     <tr key={row.key}>
                       <td>{row.name}</td>
@@ -157,13 +165,17 @@ export function PriceBreakdown({ game }: { game: GameState }) {
                       <strong>{c.name}</strong>
                       <span>{money(market.marketPrice)} / kg</span>
                       <MarketMovement change={market.changePercent} />
-                      <DemandBadge demand={market.demand} />
+                      <span>
+                        {market.channelDemand
+                          ? `W: ${market.channelDemand.wholesaler} · R: ${market.channelDemand.retailer} · Dining: ${market.channelDemand.restaurant}`
+                          : `${market.demand} demand`}
+                      </span>
                     </div>
                   );
                 })}
               <p>
-                Each crop gets its own daily demand and shock roll. Carrots remain the playable crop
-                in this season.
+                Each crop gets independent demand rolls for each channel and its own market shock
+                roll. Carrots remain the playable crop in this season.
               </p>
             </div>
             <DialogClose asChild>

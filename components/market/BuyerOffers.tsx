@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import type { BuyerId, GameState } from "@/types/game";
 import { getMarketForGame } from "@/features/pricing/market";
-import { PriceBreakdown } from "@/features/pricing/components/PriceBreakdown";
+import { DemandBadge, PriceBreakdown } from "@/features/pricing/components/PriceBreakdown";
 import { previewOrder } from "@/engine/trading";
 import { kg, money } from "@/lib/utils";
 import { CHANNEL_COLORS } from "./MarketWatch";
@@ -79,6 +79,7 @@ export function BuyerOffers({
               </div>
               <h3>{offer.name}</h3>
               <p>{offer.company}</p>
+              {offer.pricing && <DemandBadge demand={offer.pricing.demand} />}
               <div className="buyer-price">
                 ${offer.price.toFixed(2)}
                 <span>/ kg</span>

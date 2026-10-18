@@ -41,7 +41,11 @@ export function restoreGame(value: unknown): GameState {
   const pricing = saved.pricing as DynamicPricingState | undefined;
   if (
     pricing &&
-    (pricing.version !== 1 ||
+    ((pricing.version !== 1 && pricing.version !== 2) ||
+      (pricing.channelDemandStartedDay !== undefined &&
+        (!Number.isInteger(pricing.channelDemandStartedDay) ||
+          pricing.channelDemandStartedDay < pricing.startedDay ||
+          pricing.channelDemandStartedDay > marketProvider.duration + 1)) ||
       !Number.isInteger(pricing.seed) ||
       pricing.seed < 0 ||
       pricing.seed > 4294967295 ||
@@ -91,7 +95,13 @@ export function restoreGame(value: unknown): GameState {
 
   for (let day = 1; day <= (saved.day as number); day++) {
     if (pricing && day === pricing.startedDay)
-      state = enableDynamicPricing(state, pricing.seed, pricing.legacyTransactionCount);
+      state = enableDynamicPricing(
+        state,
+        pricing.seed,
+        pricing.legacyTransactionCount,
+        marketProvider,
+        { version: pricing.version, startedDay: pricing.channelDemandStartedDay },
+      );
     for (const t of transactions.filter((trade) => trade.day === day)) {
       const legacy = !pricing || index < pricing.legacyTransactionCount;
       if (
@@ -117,6 +127,12 @@ export function restoreGame(value: unknown): GameState {
       if (!result.ok) return initial;
       state = result.state;
     }
+  }
+  if (state.pricing?.version === 1) {
+    state = {
+      ...state,
+      pricing: { ...state.pricing, version: 2, channelDemandStartedDay: state.day + 1 },
+    };
   }
   return pricing
     ? state
