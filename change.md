@@ -1,5 +1,19 @@
 # Changes
 
+## Centered chosen scenario card
+
+- After revealing any of the three cards, the chosen card moves to the center and occupies 50% of the deck width. The other two stay face-down, one on either side.
+- Kept this layout on phones with compact card backs and wrapping revealed-card details. Original card indices, saved choices, and event effects are preserved.
+- Verified all three choices center correctly at exactly 50% of the deck width; the 390px phone layout has no horizontal overflow. TypeScript, ESLint, and the production build pass.
+
+## Same-quantity buyer returns and multi-crop UI fixes
+
+- Buyer cards now compare the quantity entered in the sell order, showing revenue, total selling costs, net return, and net per kg. The summary identifies the highest executable return and its advantage over the next available buyer; ties and all-loss orders are explicit.
+- Closed buyers, filled orders, capacity limits, invalid quantities, unavailable inventory, pending scenarios, and completed seasons are excluded from recommendations. Quantities are never silently reduced to make a buyer eligible.
+- Buyer selection preserves the comparison quantity. Switching crop, day, or season resets the order form and clears stale sale feedback. Sale confirmation identifies the crop and reports cash increases or decreases accurately.
+- Results use the actual initial inventory for sold/spoiled/unsold bar proportions, including custom multi-crop harvests and zero inventory. Added an accessible text description of the bar.
+- Validation: all 243 tests pass, including 13 comparison regressions; TypeScript, ESLint, formatting, and production build pass. Browser verification covered same-quantity execution, crop switching, capacity exclusions, loss warnings, and a 500 kg season ending with bar proportions of 30% sold, 13.844% spoiled, and 56.156% unsold. The 390px layout has no horizontal page overflow.
+
 ## 2026-10-17 - Dynamic crop pricing
 
 - Added the self-contained `features/pricing/` module with configurable crop sensitivity, buyer channel multipliers, daily demand, and capped market-price shocks for five crops.

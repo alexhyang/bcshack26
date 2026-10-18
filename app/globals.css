@@ -3160,7 +3160,7 @@ td:last-child {
 }
 
 .scenario-cards:has(.revealed) {
-  grid-template-columns: 1fr 2.4fr 1fr;
+  grid-template-columns: minmax(0, 1fr) 50% minmax(0, 1fr);
   align-items: stretch;
 }
 .scenario-card .scenario-sentiment {
@@ -3207,17 +3207,23 @@ td:last-child {
   letter-spacing: normal;
 }
 @media (max-width: 600px) {
-  .scenario-cards:has(.revealed) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   .scenario-card.revealed {
-    grid-column: 1 / -1;
-    order: -1;
-    padding: 20px;
+    min-width: 0;
+    padding: 12px;
   }
   .scenario-cards:has(.revealed) .face-down {
     min-height: 85px;
+    min-width: 0;
+    align-self: center;
+    padding: 8px 4px;
     gap: 8px;
+  }
+  .scenario-cards:has(.revealed) .face-down > strong {
+    display: none;
+  }
+  .scenario-cards:has(.revealed) .revealed > strong {
+    font-size: 12px;
+    overflow-wrap: anywhere;
   }
 }
 
@@ -4565,7 +4571,7 @@ td {
     bottom: 8px;
   }
   .scenario-cards:has(.revealed) .revealed {
-    padding: 18px;
+    padding: 12px;
   }
   .scenario-effects {
     gap: 14px;
@@ -5452,4 +5458,81 @@ body {
   .buyer-card {
     border-radius: 13px;
   }
+}
+
+/* Compare executable orders at a shared quantity. */
+.buyers-section .buyer-card {
+  align-content: start;
+}
+.buyer-comparison-heading {
+  margin: 16px 0 8px;
+}
+.buyer-comparison-heading strong {
+  color: var(--text);
+  font-size: 14px;
+}
+.buyer-comparison-heading p {
+  margin-top: 5px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.buyer-comparison-summary {
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border-left: 3px solid var(--sage);
+  background: var(--sage-soft);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.buyer-comparison-summary.negative {
+  border-left-color: var(--negative-ink);
+  background: var(--negative-soft);
+}
+.buyer-return-breakdown,
+.buyer-return-unavailable {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.buyer-return-breakdown > div {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  margin-bottom: 4px;
+}
+.buyer-return-breakdown > div > :last-child,
+.buyer-return-breakdown small {
+  font-family: var(--font-numeric);
+  font-variant-numeric: tabular-nums;
+}
+.buyer-return-breakdown .buyer-return-total {
+  margin-top: 8px;
+  color: var(--text);
+  align-items: baseline;
+}
+.buyer-return-total strong {
+  font-size: 18px;
+}
+.buyer-return-breakdown small {
+  display: block;
+  font-size: 11px;
+  margin-top: 4px;
+}
+.buyer-return-unavailable {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.buyer-card .offer-tag {
+  white-space: normal;
+  text-align: right;
+}
+.offer-tag.negative {
+  background: var(--negative-soft);
 }

@@ -1,6 +1,7 @@
 "use client";
 import { CropInventory } from "@/components/farm/CropInventory";
 import { totalInventory } from "@/engine/portfolio";
+import { getGameCrop } from "@/data/crops";
 import { Scenario } from "@/components/events/Scenario";
 import { getScenario, scenarioPending } from "@/engine/scenario";
 import { useEffect, useState } from "react";
@@ -15,14 +16,12 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useGameStore } from "@/store/gameStore";
-import type { BuyerId, GameView } from "@/types/game";
+import type { GameView } from "@/types/game";
 import { Header } from "./Header";
 import { Tutorial } from "@/components/tutorial/Tutorial";
 import { Sidebar } from "./Sidebar";
 import { InventoryPanel } from "@/components/farm/InventoryPanel";
-import { PriceChart } from "@/components/market/PriceChart";
-import { BuyerOffers } from "@/components/market/BuyerOffers";
-import { SellPanel } from "@/components/trading/SellPanel";
+import { TradingWorkspace } from "@/components/trading/TradingWorkspace";
 import { TradeHistory } from "@/components/trading/TradeHistory";
 import { NewsFeed } from "@/components/events/NewsFeed";
 import { Results } from "@/components/results/Results";
@@ -43,7 +42,6 @@ export function GameDashboard() {
   // Deliberately not persisted: show the guide on every launch, including saved seasons.
   const [tutorialOpen, setTutorialOpen] = useState(true);
   const [view, setView] = useState<GameView>("dashboard");
-  const [selected, setSelected] = useState<BuyerId>("wholesaler");
   const [advanceOpen, setAdvanceOpen] = useState(false);
   const [dismissedDay, setDismissedDay] = useState(0);
   const [saveWarning, setSaveWarning] = useState(false);
@@ -65,7 +63,6 @@ export function GameDashboard() {
   function restart() {
     reset();
     setView("dashboard");
-    setSelected("wholesaler");
     setDismissedDay(0);
   }
   function advance() {
@@ -218,19 +215,11 @@ export function GameDashboard() {
                 </div>
               )}
               <div className="dashboard-columns">
-                <div className="market-column">
-                  <div className="market-top-row">
-                    <PriceChart game={game} />
-                    <SellPanel
-                      key={`${game.day}-${selected}`}
-                      game={game}
-                      selected={selected}
-                      onSelect={setSelected}
-                    />
-                  </div>
-                  <BuyerOffers game={game} selected={selected} onSelect={setSelected} />
-                  <TradeHistory game={game} compact onViewAll={() => setView("history")} />
-                </div>
+                <TradingWorkspace
+                  key={`${game.pricing?.seed ?? "legacy"}-${game.day}-${getGameCrop(game).id}`}
+                  game={game}
+                  onViewHistory={() => setView("history")}
+                />
                 <NewsFeed game={game} />
               </div>
               <section className="next-day-bar">

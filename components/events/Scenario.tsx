@@ -17,6 +17,10 @@ export function Scenario({ game }: { game: GameState }) {
 
   const sentiment = selected ? scenarioSentiment(selected) : null;
   if (!hand) return null;
+  const selectedIndex = selected ? (hand.selectedIndex ?? hand.cards.indexOf(selected.id)) : -1;
+  const indices = hand.cards.map((_, index) => index);
+  const remaining = indices.filter((index) => index !== selectedIndex);
+  const cardOrder = selected ? [remaining[0], selectedIndex, remaining[1]] : indices;
 
   return (
     <section className="panel scenario-panel" aria-labelledby="scenario-heading">
@@ -41,9 +45,8 @@ export function Scenario({ game }: { game: GameState }) {
       </div>
 
       <div className="scenario-cards">
-        {hand.cards.map((_, index) => {
-          const revealed =
-            !!selected && index === (hand.selectedIndex ?? hand.cards.indexOf(selected.id));
+        {cardOrder.map((index) => {
+          const revealed = !!selected && index === selectedIndex;
 
           return (
             <button

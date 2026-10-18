@@ -139,4 +139,6 @@ Hands and choices are saved with the season and validated when restoring orders.
 
 ### Build your crop inventory
 
+Buyer cards compare the quantity entered in **Place a sell order** across all three channels. Each eligible buyer shows revenue, delivery/handling costs, total net return, and net per kg. The summary highlights the best return and its advantage over the next buyer; unavailable orders and losses are explained. Selecting another buyer preserves your quantity, while changing crop or market day starts a fresh order form.
+
 In the left sidebar, choose a crop, enter its quantity in kg, and click Add to inventory. Repeat to add different crops; adding the same crop increases its stock. Select any inventory row to view that crop's market and place sales. Remove entries with the × button while setting up. Starting quantities lock after your first sale; a new season restores the starting inventory and unlocks editing. Existing saves retain their stock. Prices are fictional simulation values.

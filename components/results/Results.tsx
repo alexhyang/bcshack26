@@ -59,6 +59,9 @@ export function Results({
       </section>
     );
   const comparisonMax = Math.max(Math.abs(score.netMargin), score.baseline, 1);
+  const harvestTotal = initialInventory(game);
+  const harvestPercent = (quantity: number) =>
+    harvestTotal > 0 ? (quantity / harvestTotal) * 100 : 0;
   return (
     <div className="results-view">
       <section className="panel results-hero">
@@ -103,10 +106,14 @@ export function Results({
             <h2>Every crop accounted for</h2>
             <Package size={16} className="text-slate-500" />
           </div>
-          <div className="harvest-bar">
-            <span style={{ width: `${score.sold / 10}%` }} />
-            <span style={{ width: `${score.spoiled / 10}%` }} />
-            <span style={{ width: `${score.unsold / 10}%` }} />
+          <div
+            className="harvest-bar"
+            role="img"
+            aria-label={`Of ${kg(harvestTotal)} kg: ${kg(score.sold)} kg sold, ${kg(score.spoiled)} kg spoiled, ${kg(score.unsold)} kg unsold.`}
+          >
+            <span style={{ width: `${harvestPercent(score.sold)}%` }} />
+            <span style={{ width: `${harvestPercent(score.spoiled)}%` }} />
+            <span style={{ width: `${harvestPercent(score.unsold)}%` }} />
           </div>
           <div className="harvest-legend">
             <span>

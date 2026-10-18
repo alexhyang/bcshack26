@@ -14,15 +14,18 @@ export function SellPanel({
   game,
   selected,
   onSelect,
+  quantity,
+  onQuantityChange,
 }: {
   game: GameState;
   selected: BuyerId;
   onSelect: (id: BuyerId) => void;
+  quantity: string;
+  onQuantityChange: (quantity: string) => void;
 }) {
   const market = getMarketForGame(game);
   const offer = market.offers.find((o) => o.id === selected)!;
   const sell = useGameStore((state) => state.sell);
-  const [quantity, setQuantity] = useState("100");
   const [message, setMessage] = useState<{ error: boolean; text: string } | null>(null);
   const filled = game.transactions.some(
     (t) => t.day === game.day && t.buyerId === selected && tradeIsForActiveCrop(game, t),
@@ -39,7 +42,7 @@ export function SellPanel({
     setMessage({
       error: !result.ok,
       text: result.ok
-        ? `Sold ${kg(amount)} kg to ${offer.name}. ${money(preview!.netReturn)} net return added to cash.`
+        ? `Sold ${kg(amount)} kg of ${getGameCrop(game).name.toLowerCase()} to ${offer.name}. Cash ${preview!.netReturn < 0 ? "decreased" : "increased"} by ${money(Math.abs(preview!.netReturn))}.`
         : result.error,
     });
   }
@@ -91,7 +94,7 @@ export function SellPanel({
                 inputMode="decimal"
                 value={quantity}
                 onChange={(e) => {
-                  setQuantity(e.target.value);
+                  onQuantityChange(e.target.value);
                   setMessage(null);
                 }}
                 aria-describedby="order-validation"
@@ -100,7 +103,7 @@ export function SellPanel({
               <button
                 type="button"
                 onClick={() => {
-                  setQuantity(String(max));
+                  onQuantityChange(String(max));
                   setMessage(null);
                 }}
                 disabled={max === 0}
@@ -115,7 +118,7 @@ export function SellPanel({
                   key={percent}
                   disabled={max === 0}
                   onClick={() => {
-                    setQuantity(String(Math.floor(max * percent) / 100));
+                    onQuantityChange(String(Math.floor(max * percent) / 100));
                     setMessage(null);
                   }}
                 >
