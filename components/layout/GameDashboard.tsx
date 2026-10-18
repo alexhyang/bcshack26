@@ -94,7 +94,7 @@ export function GameDashboard() {
       </div>
     );
   return (
-    <>
+    <div className="exchange-frame">
       <a className="skip-link" href="#main">
         Skip to trading dashboard
       </a>
@@ -344,6 +344,6 @@ export function GameDashboard() {
           </div>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

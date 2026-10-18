@@ -3,9 +3,9 @@ import { getMarketForGame, getMarketHistory } from "@/features/pricing/market";
 import { priceMovement } from "@/engine/market";
 import type { BuyerId, GameState } from "@/types/game";
 export const CHANNEL_COLORS: Record<BuyerId, string> = {
-  wholesaler: "#60a5fa",
-  retailer: "#a78bfa",
-  restaurant: "#34d399",
+  wholesaler: "var(--channel-wholesaler)",
+  retailer: "var(--channel-retailer)",
+  restaurant: "var(--channel-restaurant)",
 };
 export function MarketWatch({ game }: { game: GameState }) {
   const current = getMarketForGame(game);

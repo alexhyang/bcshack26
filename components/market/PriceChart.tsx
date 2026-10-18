@@ -98,17 +98,21 @@ export function PriceChart({ game }: { game: GameState }) {
           <ComposedChart data={points} margin={{ top: 14, right: 4, left: -14, bottom: 0 }}>
             <defs>
               <linearGradient id="priceFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#34d399" stopOpacity={0.12} />
-                <stop offset="100%" stopColor="#34d399" stopOpacity={0} />
+                <stop offset="0%" stopColor="var(--sage)" stopOpacity={0.09} />
+                <stop offset="100%" stopColor="var(--sage)" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid stroke="#ffffff09" vertical={false} strokeDasharray="3 4" />
+            <CartesianGrid stroke="var(--line)" vertical={false} strokeDasharray="3 4" />
             <XAxis
               dataKey="label"
               axisLine={false}
               tickLine={false}
               minTickGap={50}
-              tick={{ fill: "#657487", fontSize: 10 }}
+              tick={{
+                fill: "var(--text-secondary)",
+                fontSize: 10,
+                fontFamily: "var(--font-numeric)",
+              }}
               tickFormatter={(value: string) =>
                 day === 1 || range === "1D" ? value.split(" ")[1] : value.replace(" ", " · ")
               }
@@ -118,7 +122,11 @@ export function PriceChart({ game }: { game: GameState }) {
               orientation="right"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#657487", fontSize: 10 }}
+              tick={{
+                fill: "var(--text-secondary)",
+                fontSize: 10,
+                fontFamily: "var(--font-numeric)",
+              }}
               domain={priceDomain}
               allowDataOverflow
               tickFormatter={(value: number) => `$${value.toFixed(2)}`}
@@ -127,12 +135,14 @@ export function PriceChart({ game }: { game: GameState }) {
             <Tooltip
               filterNull
               contentStyle={{
-                background: "#182333",
-                border: "1px solid #2a3746",
-                borderRadius: 10,
+                background: "var(--surface)",
+                border: "1px solid var(--line)",
+                borderRadius: 8,
+                color: "var(--text)",
+                fontFamily: "var(--font-numeric)",
                 fontSize: 12,
               }}
-              labelStyle={{ color: "#cbd5e1", marginBottom: 7 }}
+              labelStyle={{ color: "var(--text-secondary)", marginBottom: 7 }}
               formatter={(value, name) => [
                 `$${Number(value).toFixed(2)} / kg`,
                 String(name).charAt(0).toUpperCase() + String(name).slice(1),
@@ -161,7 +171,7 @@ export function PriceChart({ game }: { game: GameState }) {
                   strokeWidth={2}
                   dot={false}
                   connectNulls={false}
-                  activeDot={{ r: 4, strokeWidth: 3, stroke: "#111a27" }}
+                  activeDot={{ r: 4, strokeWidth: 3, stroke: "var(--surface)" }}
                   isAnimationActive={false}
                 />
               ))}

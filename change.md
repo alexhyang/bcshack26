@@ -81,3 +81,26 @@
 - Starting inventory is editable before the first sale. Selecting a crop never resets cash, trades, the current day, or the other crops. Each crop has its own stock and buyer orders; the shared daily scenario and market rules continue to apply.
 - Storage, spoilage, inventory totals, results, and save replay account for all inventory entries. Transaction history identifies the sold crop. Included a compact inventory builder on smaller screens where the sidebar collapses.
 - Validation: all 230 tests, TypeScript typecheck, ESLint, and the production build passed. Browser verification added 500 kg of apples and 250 kg of potatoes as separate sidebar entries and confirmed the 750 kg inventory and selected crop survive reload.
+
+## Theme C — Modern Agricultural Exchange
+
+- Replaced dark navy and neon accents with shared cream, ivory, forest, sage, harvest-orange, market-green, and terracotta theme tokens. Used darker companion shades for small text contrast.
+- Bundled DM Sans and IBM Plex Mono locally, with their open-source licenses. Interface copy uses DM Sans; prices, quantities, percentages, and market statistics use IBM Plex Mono.
+- Restyled the header, sidebar inventory, account cards, chart, buyer comparisons, trade form, history, results, dialogs, and tutorial. Reduced gradients, shadows, and corner radii; added restrained field-note detailing to scenario cards.
+- Refined desktop, laptop, tablet, and mobile spacing, tables, form controls, and contrast while retaining existing navigation, focus states, and reduced-motion support.
+- Visual changes only: game rules, inventory behavior, scenario selection/reveal, random events, multipliers, calculations, routes, state, and persistence are unchanged.
+
+### Theme verification
+
+- All 230 regression tests, ESLint, TypeScript typecheck, and the production build passed.
+- Verified overview, sidebar inventory, tutorial, chart, price breakdown, simulated sale, trade history, and completed season results in the browser, including 390px phone, 768px tablet, and 1024px laptop layouts.
+- Used a separate preview origin for interactive checks so the existing saved game stayed untouched; removed the temporary preview page afterward.
+- Checked primary text and semantic text colors against ivory surfaces for accessible contrast. No simulation, store, data, or pricing-logic files changed; the route structure is unchanged.
+
+## Reference-inspired forest and soil theme
+
+- Adjusted the visual theme to match the supplied dashboard reference: taupe outer canvas, framed ivory workspace, deep forest sidebar, earthy soil-brown scenario panel, leafy green learning card, and berry-red action accents.
+- Moved the desktop brand into the sidebar and aligned the header with the workspace using presentation-only layout changes. Kept the existing mobile header and navigation controls.
+- Updated inventory tiles, account statistics, chart colors, cards, tables, and dialogs to the reference palette. Preserved existing scenario selection and reveal behavior.
+- Game mechanics, calculations, data, routes, state management, and persistence are unchanged.
+- Validation: all 230 tests, ESLint, TypeScript typecheck, and the production build passed. Visually checked desktop, 1024px laptop, 768px tablet, and 390px phone layouts; verified readable action, sidebar, and scenario text contrast and removed the temporary responsive preview page.

@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { ArrowUpRight, ChartNoAxesCombined, History, Trophy, Sprout, MapPin } from "lucide-react";
 import type { GameState, GameView } from "@/types/game";
 import { CropInventory } from "@/components/farm/CropInventory";
@@ -18,6 +19,14 @@ export function Sidebar({
   ] as const;
   return (
     <aside className="sidebar">
+      <Link href="/" className="sidebar-brand" aria-label="FarmStreet home">
+        <span className="brand-icon">
+          <Sprout size={29} strokeWidth={2.1} />
+        </span>
+        <span>
+          FarmStreet<span className="brand-period">.</span>
+        </span>
+      </Link>
       <div className="sidebar-top">
         <span className="eyebrow">YOUR WORKSPACE</span>
         <nav aria-label="Main navigation">

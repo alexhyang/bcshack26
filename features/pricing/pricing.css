@@ -5,7 +5,7 @@
   flex-wrap: wrap;
   padding: 12px 14px;
   margin-bottom: 12px;
-  background: #111c29;
+  background: var(--surface);
   border: 1px solid var(--line-strong);
   border-radius: 8px;
 }
@@ -15,23 +15,23 @@
   gap: 9px;
 }
 .pricing-market-label {
-  color: #60788e;
-  font-size: 8px;
+  color: var(--text-secondary);
+  font-size: 10px;
   letter-spacing: 1px;
 }
 .pricing-market-strip strong {
-  color: #c9d9e7;
+  color: var(--text);
   font-size: 15px;
   font-weight: 500;
 }
 .pricing-market-strip strong small {
-  color: #678095;
-  font-size: 9px;
+  color: var(--text-secondary);
+  font-size: 11px;
   margin-left: 4px;
 }
 .pricing-market-strip > button {
   margin-left: auto;
-  font-size: 9px;
+  font-size: 11px;
   height: 29px;
 }
 .demand-badge {
@@ -41,31 +41,31 @@
   padding: 4px 6px;
   border: 1px solid;
   border-radius: 4px;
-  font-size: 8px;
+  font-size: 10px;
   line-height: 1.2;
   letter-spacing: 0.35px;
 }
 .demand-high {
   color: var(--green);
-  background: #34d3990b;
-  border-color: #34d39922;
+  background: var(--sage-soft);
+  border-color: var(--sage-border);
 }
 .demand-medium {
   color: var(--amber);
-  background: #e9b65a08;
-  border-color: #e9b65a22;
+  background: var(--harvest-soft);
+  border-color: var(--harvest-border);
 }
 .demand-low {
   color: var(--red);
-  background: #f1828808;
-  border-color: #f1828822;
+  background: var(--harvest-soft);
+  border-color: var(--harvest-border);
 }
 .pricing-movement {
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  color: #71859c;
-  font-size: 10px;
+  color: var(--text-secondary);
+  font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
 .price-breakdown-dialog {
@@ -84,14 +84,14 @@
 }
 .pricing-context > div > span:first-child {
   display: block;
-  color: #6a8198;
-  font-size: 10px;
+  color: var(--text-secondary);
+  font-size: 11px;
   margin-bottom: 9px;
 }
 .pricing-context strong {
   font-size: 13px;
   font-weight: 500;
-  color: #bdd3e0;
+  color: var(--text);
 }
 .pricing-context .demand-badge {
   display: inline-flex !important;
@@ -99,11 +99,11 @@
 }
 .pricing-table {
   min-width: 460px;
-  font-size: 11px;
+  font-size: 12px;
 }
 .pricing-table th {
-  font-size: 10px;
-  color: #94adbd;
+  font-size: 11px;
+  color: var(--text);
 }
 .pricing-table th:not(:first-child),
 .pricing-table td:not(:first-child) {
@@ -118,20 +118,20 @@
   padding-right: 10px;
 }
 .pricing-table td {
-  font-size: 11px;
-  color: #a1b7cc;
+  font-size: 12px;
+  color: var(--text);
 }
 .pricing-final-row td {
   font-size: 15px;
-  color: #d5e4ef;
+  color: var(--text);
 }
 .pricing-final-row td:first-child {
-  font-size: 11px;
+  font-size: 12px;
 }
 .pricing-best {
   display: block;
-  color: #6cae97;
-  font-size: 7px;
+  color: var(--forest);
+  font-size: 10px;
   letter-spacing: 0.5px;
   margin-top: 6px;
 }
@@ -139,8 +139,8 @@
   display: flex;
   align-items: flex-start;
   gap: 7px;
-  font-size: 10px;
-  color: #6d879e;
+  font-size: 11px;
+  color: var(--text-secondary);
   line-height: 1.9;
   margin: 14px 0 20px;
 }
@@ -156,14 +156,14 @@
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  color: #c0d1e0;
+  color: var(--text);
   font-size: 12px;
   font-weight: 500;
   margin-bottom: 14px;
 }
 .pricing-crop-watch h3 span {
-  color: #5f7b8f;
-  font-size: 8px;
+  color: var(--text-secondary);
+  font-size: 10px;
   font-weight: 400;
 }
 .pricing-crop-watch > div {
@@ -172,12 +172,12 @@
   align-items: center;
   gap: 12px;
   margin: 14px 0;
-  font-size: 10px;
-  color: #8fa9bb;
+  font-size: 11px;
+  color: var(--text);
 }
 .pricing-crop-watch strong {
   font-weight: 500;
-  color: #bccedc;
+  color: var(--text);
 }
 .pricing-crop-watch .demand-badge {
   width: max-content;
@@ -185,8 +185,8 @@
 }
 .pricing-crop-watch > p {
   margin-top: 17px;
-  font-size: 10px;
-  color: #59768b;
+  font-size: 11px;
+  color: var(--text-secondary);
   line-height: 1.9;
 }
 @media (max-width: 690px) {
@@ -224,9 +224,146 @@
 @media (max-width: 690px) {
   .pricing-scroll-hint {
     display: block;
-    color: #678b9d;
-    font-size: 10px;
+    color: var(--text-secondary);
+    font-size: 11px;
     margin: 0 0 12px;
     line-height: 1.8;
+  }
+}
+
+/* Theme C: shared palette, financial typography and compact comparisons. */
+.pricing-market-strip {
+  background: var(--bg);
+  border-color: var(--line);
+  gap: 10px;
+  padding: 11px 13px;
+}
+.pricing-market-label {
+  color: var(--text-secondary);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+.pricing-market-strip strong {
+  color: var(--forest);
+  font-family: var(--font-numeric);
+  font-size: 16px;
+}
+.pricing-market-strip strong small {
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  font-size: 11px;
+}
+.pricing-market-strip > button {
+  font-size: 11px;
+  min-height: 33px;
+}
+.channel-demand-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.demand-badge {
+  font-size: 9px;
+  padding: 4px 6px;
+  letter-spacing: 0.02em;
+}
+.demand-high {
+  color: var(--positive-ink);
+  background: var(--sage-soft);
+  border-color: var(--sage-border);
+}
+.demand-medium {
+  color: var(--harvest-ink);
+  background: var(--harvest-soft);
+  border-color: var(--harvest-border);
+}
+.demand-low {
+  color: var(--negative-ink);
+  background: var(--negative-soft);
+  border-color: var(--negative-border);
+}
+.pricing-movement {
+  color: var(--text-secondary);
+  font-family: var(--font-numeric);
+  font-size: 11px;
+}
+.pricing-context {
+  padding-block: 14px;
+}
+.pricing-context strong {
+  color: var(--text);
+  font-family: var(--font-numeric);
+  font-size: 13px;
+}
+.pricing-context > div > span:first-child {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+.pricing-table th {
+  color: var(--forest);
+  font-size: 12px;
+}
+.pricing-table td {
+  color: var(--text);
+  font-size: 12px;
+  font-family: var(--font-numeric);
+}
+.pricing-table td:first-child {
+  font-family: var(--font-ui);
+}
+.pricing-final-row td {
+  background: var(--sage-soft);
+  font-size: 17px;
+  font-weight: 500;
+}
+.pricing-final-row td:first-child {
+  font-size: 12px;
+}
+.pricing-best {
+  color: var(--positive-ink);
+  font-family: var(--font-ui);
+  font-size: 9px;
+}
+.pricing-formula-note,
+.pricing-crop-watch > p,
+.pricing-scroll-hint {
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.pricing-crop-watch h3 {
+  color: var(--forest);
+  font-size: 14px;
+}
+.pricing-crop-watch h3 span {
+  color: var(--text-secondary);
+  font-size: 10px;
+}
+.pricing-crop-watch > div {
+  color: var(--text-secondary);
+  font-size: 11px;
+  grid-template-columns: 1fr 100px 65px minmax(140px, 1.5fr);
+  gap: 10px;
+  padding-block: 9px;
+  margin: 0;
+  border-bottom: 1px solid var(--line);
+}
+.pricing-crop-watch strong {
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 12px;
+}
+.pricing-crop-watch > div > span:nth-child(2) {
+  font-family: var(--font-numeric);
+}
+@media (max-width: 690px) {
+  .pricing-crop-watch > div {
+    grid-template-columns: 1fr 100px;
+    gap: 8px;
+  }
+  .pricing-context {
+    gap: 13px;
+  }
+  .pricing-context strong {
+    font-size: 12px;
   }
 }

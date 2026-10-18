@@ -135,7 +135,7 @@ export function Tutorial({
                 )}
               </mask>
             </defs>
-            <rect width="100%" height="100%" fill="rgba(3, 8, 15, 0.78)" mask={`url(#${maskId})`} />
+            <rect width="100%" height="100%" fill="var(--overlay)" mask={`url(#${maskId})`} />
             {spotlight && (
               <rect
                 className="tour-spotlight"
@@ -145,7 +145,7 @@ export function Tutorial({
                 height={spotlight.height}
                 rx="12"
                 fill="none"
-                stroke="#34d399"
+                stroke="var(--forest)"
                 strokeWidth="2"
               />
             )}
