@@ -1,12 +1,12 @@
-# FarmStreet player guide
+# FarmSmart player guide
 
-The in-game **quick tour** opens every time you launch or reload FarmStreet. It highlights real controls on the dashboard and opens the actual Trade History and Results pages to show you where things are. The rest of the screen dims while a green outline marks the current area.
+The in-game **quick tour** opens every time you launch or reload FarmSmart. It highlights real controls on the dashboard and opens the actual Trade History and Results pages to show you where things are. The rest of the screen dims while a green outline marks the current area.
 
 Use **Next** and **Back**, or click the progress bars to jump between the nine steps. **Skip tutorial** stays visible at the top-right on every step. Escape also closes the tour. Skipping or finishing returns you to the market (or your final results if the season has ended), preserving your saved progress. The book button in the header replays the tour from the beginning.
 
 The tour is a walkthrough: it does not place trades or advance days. Finish or skip it to use the highlighted controls.
 
-![FarmStreet spotlight tour](tutorial-preview.png)
+![FarmSmart spotlight tour](tutorial-preview.png)
 
 ## 1. Understand your harvest
 

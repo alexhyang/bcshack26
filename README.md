@@ -1,4 +1,4 @@
-# FarmStreet 🌱
+# FarmSmart 🌱
 
 A complete, browser-local agricultural market simulator. Build an inventory of Canadian-grown crops in the left sidebar and take it through seven Canadian market sessions: compare buyers, sell or hold inventory, absorb storage and spoilage costs, and review your strategy against an immediate-sale baseline.
 
@@ -108,7 +108,7 @@ React components render and collect input. They invoke Zustand actions rather th
 
 The original fixed-price tests remain explicit legacy fixtures so migrated orders retain their original accounting. New pricing tests exercise the default dynamic game and exact persisted-state replay. Browser verification includes the actual dashboard, breakdown panel, a sale, advancement, and save/reload.
 
-![FarmStreet dashboard](docs/farmstreet-dashboard.png)
+![FarmSmart dashboard](docs/farmstreet-dashboard.png)
 
 ## Development and production build folders
 

@@ -144,7 +144,7 @@ export function Scenario({ game }: { game: GameState }) {
               ) : (
                 <>
                   <Sprout size={30} />
-                  <strong>FARMSTREET</strong>
+                  <strong>FARMSMART</strong>
                   <span>{selected ? <LockKeyhole size={14} /> : `REVEAL CARD 0${index + 1}`}</span>
                 </>
               )}

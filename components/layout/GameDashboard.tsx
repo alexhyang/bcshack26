@@ -50,7 +50,7 @@ export function GameDashboard() {
       .catch(() => setSaveWarning(true))
       .finally(() => setReady(true));
     try {
-      const key = "farmstreet-storage-check";
+      const key = "farmsmart-storage-check";
       localStorage.setItem(key, "1");
       localStorage.removeItem(key);
     } catch {
@@ -85,7 +85,7 @@ export function GameDashboard() {
           <Sprout size={28} />
         </span>
         <strong>
-          FarmStreet<span className="text-emerald-400">.</span>
+          FarmSmart<span className="text-emerald-400">.</span>
         </strong>
         <p>Getting your trading desk ready…</p>
       </div>
@@ -259,7 +259,7 @@ export function GameDashboard() {
           <footer className="workspace-footer">
             <span>
               <Sprout size={12} />
-              FARMSTREET <span className="text-slate-700">/</span> GROW YOUR MARKET INSTINCT
+              FARMSMART <span className="text-slate-700">/</span> GROW YOUR MARKET INSTINCT
             </span>
             <span>
               Simulated data. Real lessons.

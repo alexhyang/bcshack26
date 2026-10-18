@@ -1,5 +1,11 @@
 # Changes
 
+## Rename to FarmSmart
+
+- Renamed the project package, browser title, desktop and mobile branding, loading screen, scenario card backs, footer, and documentation to FarmSmart.
+- Retained the existing browser save key so saved seasons and inventory continue to load after the rename.
+- Validation: all 243 tests, ESLint, TypeScript, formatting, and the production build pass. Verified the FarmSmart browser title, visible branding, scenario card backs, and existing saved inventory in the running app.
+
 ## Scenario reveal movement
 
 - Temporarily hide both unchosen card backs while the selected card slides and expands from its original position into the centered half-width slot, then fade them back in after it settles.

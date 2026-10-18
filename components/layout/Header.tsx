@@ -23,12 +23,12 @@ export function Header({
 }) {
   return (
     <header className="topbar">
-      <Link href="/" className="brand" aria-label="FarmStreet home">
+      <Link href="/" className="brand" aria-label="FarmSmart home">
         <span className="brand-icon">
           <Sprout size={24} strokeWidth={2.3} />
         </span>
         <span>
-          Farm<span className="text-emerald-400">Street</span>
+          Farm<span className="text-emerald-400">Smart</span>
           <span className="brand-period">.</span>
         </span>
       </Link>

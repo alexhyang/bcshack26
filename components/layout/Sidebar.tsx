@@ -19,12 +19,12 @@ export function Sidebar({
   ] as const;
   return (
     <aside className="sidebar">
-      <Link href="/" className="sidebar-brand" aria-label="FarmStreet home">
+      <Link href="/" className="sidebar-brand" aria-label="FarmSmart home">
         <span className="brand-icon">
           <Sprout size={29} strokeWidth={2.1} />
         </span>
         <span>
-          FarmStreet<span className="brand-period">.</span>
+          FarmSmart<span className="brand-period">.</span>
         </span>
       </Link>
       <div className="sidebar-top">

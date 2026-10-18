@@ -1,6 +1,6 @@
 # Dynamic crop pricing
 
-This module extends the existing FarmStreet engine, Zustand save, dashboard, and seven-day loop. All market data is simulated. It adds no dependencies, backend, parallel day counter, or alternate freshness control.
+This module extends the existing FarmSmart engine, Zustand save, dashboard, and seven-day loop. All market data is simulated. It adds no dependencies, backend, parallel day counter, or alternate freshness control.
 
 ## Files
 
