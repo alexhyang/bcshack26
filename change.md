@@ -66,3 +66,9 @@
 - Versioned demand simulation preserves prior saved quotes and transactions. Existing seasons adopt independent channel demand starting the next day; new seasons use it immediately. Seeded rolls remain stable on reload.
 
 - Validation: all 110 tests passed, including opposite channel-demand levels and legacy-save migration; TypeScript typecheck and ESLint passed.
+
+## Price chart visibility and vertical scaling
+
+- Omitted zero-price observations from chart lines, fill, and tooltips. Closed buyers leave gaps instead of drawing zero-price drops.
+- Automatically fit the vertical axis to positive prices in the selected period and visible channels, with a small margin so lines fill the chart area.
+- Validation: TypeScript typecheck and ESLint passed.

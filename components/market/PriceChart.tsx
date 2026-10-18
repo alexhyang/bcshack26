@@ -15,6 +15,12 @@ import { getMarketHistory } from "@/features/pricing/market";
 import type { GameState } from "@/types/game";
 import { MarketWatch, CHANNEL_COLORS } from "./MarketWatch";
 
+// A zero quote represents an unavailable buyer, not a market price observation.
+const chartPrice = (value: number) => {
+  const price = Number(value.toFixed(2));
+  return Number.isFinite(price) && price > 0 ? price : null;
+};
+
 export function PriceChart({ game }: { game: GameState }) {
   const day = game.day;
   const [range, setRange] = useState("ALL");
@@ -30,14 +36,27 @@ export function PriceChart({ game }: { game: GameState }) {
       drift.map((factor, i) => ({
         label: `D${market.day} ${9 + i}:00`,
         day: market.day,
-        wholesaler: Number((market.offers[0].price * (factor + (i === 7 ? 0 : 0.018))).toFixed(2)),
-        retailer: Number(
-          (market.offers[1].price * (factor + (i === 7 ? 0 : i % 2 ? -0.007 : 0.012))).toFixed(2),
+        wholesaler: chartPrice(market.offers[0].price * (factor + (i === 7 ? 0 : 0.018))),
+        retailer: chartPrice(
+          market.offers[1].price * (factor + (i === 7 ? 0 : i % 2 ? -0.007 : 0.012)),
         ),
-        restaurant: Number((market.offers[2].price * factor).toFixed(2)),
+        restaurant: chartPrice(market.offers[2].price * factor),
       })),
     );
   }, [game, range]);
+  const priceDomain = useMemo<[number, number]>(() => {
+    const channels = (["wholesaler", "retailer", "restaurant"] as const).filter(
+      (channel) => visible[channel],
+    );
+    const prices = points
+      .flatMap((point) => channels.map((channel) => point[channel]))
+      .filter((price): price is number => price !== null);
+    if (!prices.length) return [0, 1];
+    const minimum = Math.min(...prices);
+    const maximum = Math.max(...prices);
+    const padding = Math.max((maximum - minimum) * 0.08, 0.01);
+    return [Math.max(0, minimum - padding), maximum + padding];
+  }, [points, visible]);
   return (
     <section className="panel chart-panel" data-tour="price-chart">
       <div className="panel-heading">
@@ -98,11 +117,13 @@ export function PriceChart({ game }: { game: GameState }) {
               axisLine={false}
               tickLine={false}
               tick={{ fill: "#657487", fontSize: 10 }}
-              domain={[0, "auto"]}
+              domain={priceDomain}
+              allowDataOverflow
               tickFormatter={(value: number) => `$${value.toFixed(2)}`}
               width={54}
             />
             <Tooltip
+              filterNull
               contentStyle={{
                 background: "#182333",
                 border: "1px solid #2a3746",
@@ -122,6 +143,8 @@ export function PriceChart({ game }: { game: GameState }) {
                 stroke="none"
                 fill="url(#priceFill)"
                 tooltipType="none"
+                baseValue="dataMin"
+                connectNulls={false}
                 isAnimationActive={false}
               />
             )}
@@ -135,6 +158,7 @@ export function PriceChart({ game }: { game: GameState }) {
                   stroke={CHANNEL_COLORS[channel]}
                   strokeWidth={2}
                   dot={false}
+                  connectNulls={false}
                   activeDot={{ r: 4, strokeWidth: 3, stroke: "#111a27" }}
                   isAnimationActive={false}
                 />
@@ -160,7 +184,8 @@ export function PriceChart({ game }: { game: GameState }) {
       </div>
       <div className="chart-disclaimer">
         <Info size={11} />
-        Illustrative intraday history. Orders execute at the daily buyer offer.
+        Illustrative intraday history. Zero-price quotes are omitted; the vertical axis fits visible
+        prices. Orders execute at the daily buyer offer.
       </div>
     </section>
   );
