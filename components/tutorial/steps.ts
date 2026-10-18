@@ -38,7 +38,7 @@ export const tutorialSteps: readonly TutorialStep[] = [
     label: "Compare buyers",
     title: "A high price is only part of the deal.",
     description:
-      "Compare the price, capacity, delivery fee, and handling cost on these cards. Wholesalers buy more; restaurants pay more per kg but accept smaller orders.",
+      "Compare price, capacity, and selling costs. Open Show Price Breakdown to see how channel, crop freshness, and today’s demand combine. Restaurants reward fresh crops; wholesalers are more tolerant as crops age.",
     hint: "Click a buyer card after the tour to select them. Each buyer accepts one order per day, even if you use only part of their capacity.",
   },
   {
@@ -78,7 +78,7 @@ export const tutorialSteps: readonly TutorialStep[] = [
     label: "Sell or hold",
     title: "Done for today? Move to the next session.",
     description:
-      "Use Next day after making your sales. The confirmation shows storage expenses and expected spoilage before you commit. Holding stock costs money and leaves fewer carrots to sell.",
+      "Use Next Market Day after making your sales. The confirmation shows storage expenses and expected spoilage before you commit. Holding stock costs money and leaves fewer carrots to sell.",
     hint: "You can still trade on Day 7. That day this button becomes End season. Unsold carrots have $0 salvage value.",
   },
   {
@@ -98,7 +98,7 @@ export const tutorialSteps: readonly TutorialStep[] = [
     label: "Your results",
     title: "See what your decisions earned.",
     description:
-      "Season results shows your progress now and the full breakdown after Day 7: revenue, expenses, sold and wasted stock, and a comparison with the $976 Day 1 wholesale baseline.",
+      "Season results shows your progress now and the full breakdown after Day 7: revenue, expenses, sold and wasted stock, and a comparison with selling the full harvest to the Day 1 wholesaler under the same opening conditions.",
     hint: "Finish the tour to return to the game. Use the book button in the header to replay it, or Skip tutorial at any point.",
   },
 ];

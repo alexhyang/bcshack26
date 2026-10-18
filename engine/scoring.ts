@@ -2,13 +2,18 @@ import type { GameState, FinalScore } from "@/types/game";
 import type { MarketDataProvider } from "@/data/market-provider";
 import { marketProvider } from "@/data/simulated-provider";
 import { previewOrder, round } from "./trading";
+import { priceMarketDay } from "@/features/pricing/market";
 
 export function scoreGame(
   state: GameState,
   provider: MarketDataProvider = marketProvider,
 ): FinalScore {
   const sold = round(state.transactions.reduce((sum, t) => sum + t.quantity, 0));
-  const wholesale = provider.getDay(1).offers.find((o) => o.id === "wholesaler")!;
+  const opening =
+    state.pricing && state.pricing.legacyTransactionCount === 0
+      ? priceMarketDay({ ...state, freshness: 100 }, provider.getDay(1), provider)
+      : provider.getDay(1);
+  const wholesale = opening.offers.find((o) => o.id === "wholesaler")!;
   // The demo's Day 1 wholesaler can buy the entire initial harvest in one order.
   const baseline = previewOrder(wholesale, provider.crop.initialInventory).netReturn;
   const netMargin = round(state.grossRevenue - state.sellingCosts - state.storageCosts);

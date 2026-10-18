@@ -1,8 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { advanceDay, createInitialState } from "@/engine/game";
+import { advanceDay, createInitialState as createState } from "@/engine/game";
 import { executeSale } from "@/engine/trading";
 import { scoreGame } from "@/engine/scoring";
 import { marketProvider } from "@/data/simulated-provider";
+const createInitialState = () => createState(marketProvider, { dynamicPricing: false });
 import { holdOvernight } from "@/engine/inventory";
 import type { GameState } from "@/types/game";
 

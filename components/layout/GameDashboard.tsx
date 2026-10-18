@@ -30,7 +30,7 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
-import { marketProvider } from "@/data/simulated-provider";
+import { getMarketForGame } from "@/features/pricing/market";
 import { kg, money } from "@/lib/utils";
 export function GameDashboard() {
   const { game, nextDay, reset } = useGameStore();
@@ -65,7 +65,7 @@ export function GameDashboard() {
     setAdvanceOpen(false);
     if (result.ok && result.state.completed) setView("results");
   }
-  const market = marketProvider.getDay(game.day);
+  const market = getMarketForGame(game);
   const lastSummary = game.summaries.at(-1);
   const todayTrades = game.transactions.filter((t) => t.day === game.day);
   const todayNet = todayTrades.reduce((sum, t) => sum + t.netReturn, 0);
@@ -199,7 +199,7 @@ export function GameDashboard() {
               <div className="dashboard-columns">
                 <div className="market-column">
                   <div className="market-top-row">
-                    <PriceChart day={game.day} />
+                    <PriceChart game={game} />
                     <SellPanel
                       key={`${game.day}-${selected}`}
                       game={game}
@@ -234,7 +234,7 @@ export function GameDashboard() {
                     {game.day === 7 ? "Last call for your harvest" : "Tomorrow is a new market"}
                   </span>
                   <Button size="lg" data-tour="next-day" onClick={() => setAdvanceOpen(true)}>
-                    {game.day === 7 ? "End season" : "Next day"}
+                    {game.day === 7 ? "End season" : "Next Market Day"}
                     <ArrowRight size={16} />
                   </Button>
                 </div>

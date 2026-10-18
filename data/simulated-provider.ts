@@ -2,6 +2,7 @@ import type { MarketDataProvider } from "./market-provider";
 import { CROP, GAME_DURATION, SCENARIO, SCENARIO_ID } from "./scenarios";
 
 export class SimulatedMarketProvider implements MarketDataProvider {
+  readonly mode = "simulation" as const;
   readonly scenarioId = SCENARIO_ID;
   readonly duration = GAME_DURATION;
   readonly crop = CROP;

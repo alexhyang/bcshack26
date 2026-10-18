@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { createInitialState } from "@/engine/game";
+import { createInitialState as createState } from "@/engine/game";
 import { executeSale, previewOrder } from "@/engine/trading";
 import { marketProvider } from "@/data/simulated-provider";
+const createInitialState = () => createState(marketProvider, { dynamicPricing: false });
 import { remainingCapacity } from "@/engine/market";
 import type { BuyerId } from "@/types/game";
 

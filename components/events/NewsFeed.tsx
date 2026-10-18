@@ -8,7 +8,7 @@ import {
   Leaf,
   Thermometer,
 } from "lucide-react";
-import { marketProvider } from "@/data/simulated-provider";
+import { getMarketForGame, getMarketHistory } from "@/features/pricing/market";
 import { EventCard } from "./EventCard";
 import type { GameState } from "@/types/game";
 import { money, kg } from "@/lib/utils";
@@ -43,9 +43,8 @@ const lessons = [
   },
 ];
 export function NewsFeed({ game }: { game: GameState }) {
-  const market = marketProvider.getDay(game.day);
-  const oldEvents = marketProvider
-    .getHistory(game.day)
+  const market = getMarketForGame(game);
+  const oldEvents = getMarketHistory(game)
     .slice(0, -1)
     .flatMap((d) => d.events.map((e) => ({ ...e, day: d.day })))
     .reverse()

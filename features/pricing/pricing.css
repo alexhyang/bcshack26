@@ -1,0 +1,232 @@
+.pricing-market-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background: #111c29;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+}
+.pricing-market-strip > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.pricing-market-label {
+  color: #60788e;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+.pricing-market-strip strong {
+  color: #c9d9e7;
+  font-size: 15px;
+  font-weight: 500;
+}
+.pricing-market-strip strong small {
+  color: #678095;
+  font-size: 9px;
+  margin-left: 4px;
+}
+.pricing-market-strip > button {
+  margin-left: auto;
+  font-size: 9px;
+  height: 29px;
+}
+.demand-badge {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 4px 6px;
+  border: 1px solid;
+  border-radius: 4px;
+  font-size: 8px;
+  line-height: 1.2;
+  letter-spacing: 0.35px;
+}
+.demand-high {
+  color: var(--green);
+  background: #34d3990b;
+  border-color: #34d39922;
+}
+.demand-medium {
+  color: var(--amber);
+  background: #e9b65a08;
+  border-color: #e9b65a22;
+}
+.demand-low {
+  color: var(--red);
+  background: #f1828808;
+  border-color: #f1828822;
+}
+.pricing-movement {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: #71859c;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.price-breakdown-dialog {
+  max-width: 720px;
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.pricing-context {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  padding: 18px 0;
+  margin: 12px 0;
+  border-bottom: 1px solid var(--line-strong);
+}
+.pricing-context > div > span:first-child {
+  display: block;
+  color: #6a8198;
+  font-size: 10px;
+  margin-bottom: 9px;
+}
+.pricing-context strong {
+  font-size: 13px;
+  font-weight: 500;
+  color: #bdd3e0;
+}
+.pricing-context .demand-badge {
+  display: inline-flex !important;
+  margin-bottom: 0 !important;
+}
+.pricing-table {
+  min-width: 460px;
+  font-size: 11px;
+}
+.pricing-table th {
+  font-size: 10px;
+  color: #94adbd;
+}
+.pricing-table th:not(:first-child),
+.pricing-table td:not(:first-child) {
+  text-align: right;
+}
+.pricing-table th:first-child,
+.pricing-table td:first-child {
+  padding-left: 10px;
+}
+.pricing-table th:last-child,
+.pricing-table td:last-child {
+  padding-right: 10px;
+}
+.pricing-table td {
+  font-size: 11px;
+  color: #a1b7cc;
+}
+.pricing-final-row td {
+  font-size: 15px;
+  color: #d5e4ef;
+}
+.pricing-final-row td:first-child {
+  font-size: 11px;
+}
+.pricing-best {
+  display: block;
+  color: #6cae97;
+  font-size: 7px;
+  letter-spacing: 0.5px;
+  margin-top: 6px;
+}
+.pricing-formula-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 10px;
+  color: #6d879e;
+  line-height: 1.9;
+  margin: 14px 0 20px;
+}
+.pricing-formula-note svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.pricing-crop-watch {
+  border-top: 1px solid var(--line-strong);
+  padding-top: 18px;
+}
+.pricing-crop-watch h3 {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #c0d1e0;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+.pricing-crop-watch h3 span {
+  color: #5f7b8f;
+  font-size: 8px;
+  font-weight: 400;
+}
+.pricing-crop-watch > div {
+  display: grid;
+  grid-template-columns: 1fr 95px 65px 125px;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0;
+  font-size: 10px;
+  color: #8fa9bb;
+}
+.pricing-crop-watch strong {
+  font-weight: 500;
+  color: #bccedc;
+}
+.pricing-crop-watch .demand-badge {
+  width: max-content;
+  justify-self: end;
+}
+.pricing-crop-watch > p {
+  margin-top: 17px;
+  font-size: 10px;
+  color: #59768b;
+  line-height: 1.9;
+}
+@media (max-width: 690px) {
+  .pricing-market-strip {
+    gap: 10px;
+  }
+  .pricing-market-strip > button {
+    margin-left: 0;
+  }
+  .price-breakdown-dialog {
+    padding: 23px 18px;
+    width: calc(100% - 24px);
+  }
+  .pricing-context {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .pricing-crop-watch > div {
+    grid-template-columns: 1fr 80px;
+    gap: 8px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .pricing-crop-watch > div > span:nth-child(2) {
+    text-align: right;
+  }
+  .pricing-crop-watch h3 {
+    flex-wrap: wrap;
+  }
+}
+
+.pricing-scroll-hint {
+  display: none;
+}
+@media (max-width: 690px) {
+  .pricing-scroll-hint {
+    display: block;
+    color: #678b9d;
+    font-size: 10px;
+    margin: 0 0 12px;
+    line-height: 1.8;
+  }
+}

@@ -9,7 +9,9 @@ import type {
 } from "@/types/game";
 import { getBuyer } from "./market";
 
-export const round = (value: number) => Math.round((value + Number.EPSILON) * 100) / 100;
+import { round } from "@/lib/numbers";
+export { round } from "@/lib/numbers";
+import { priceMarketDay } from "@/features/pricing/market";
 
 export function previewOrder(offer: BuyerOffer, quantity: number): OrderPreview {
   const grossRevenue = round(quantity * offer.price);
@@ -54,7 +56,7 @@ export function executeSale(
 ): GameResult {
   const error = validateOrder(state, day, buyerId, quantity);
   if (error) return { ok: false, error };
-  const offer = getBuyer(day, buyerId)!;
+  const offer = getBuyer(priceMarketDay(state, day), buyerId)!;
   const preview = previewOrder(offer, quantity);
   const transaction: Transaction = {
     ...preview,
@@ -63,6 +65,7 @@ export function executeSale(
     buyerId,
     buyerName: offer.name,
     price: offer.price,
+    ...(offer.pricing ? { pricing: offer.pricing } : {}),
   };
   return {
     ok: true,

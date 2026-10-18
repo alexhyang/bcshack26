@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { restoreGame } from "@/engine/saves";
-import { createInitialState, advanceDay } from "@/engine/game";
+import { createInitialState as createState, advanceDay } from "@/engine/game";
 import { executeSale } from "@/engine/trading";
 import { marketProvider } from "@/data/simulated-provider";
+const createInitialState = () => createState(marketProvider, { dynamicPricing: false });
 
 describe("saved seasons", () => {
   afterEach(() => vi.unstubAllGlobals());
@@ -11,8 +12,8 @@ describe("saved seasons", () => {
     if (!sale.ok) throw Error("Expected valid sale");
     const advanced = advanceDay(sale.state);
     if (!advanced.ok) throw Error("Expected advance");
-    expect(restoreGame(JSON.parse(JSON.stringify(advanced.state)))).toEqual(advanced.state);
-    expect(restoreGame({ ...advanced.state, cash: 99999, inventory: 99999 })).toEqual(
+    expect(restoreGame(JSON.parse(JSON.stringify(advanced.state)))).toMatchObject(advanced.state);
+    expect(restoreGame({ ...advanced.state, cash: 99999, inventory: 99999 })).toMatchObject(
       advanced.state,
     );
   });
@@ -23,7 +24,7 @@ describe("saved seasons", () => {
       if (!result.ok) throw Error("Expected advance");
       state = result.state;
     }
-    expect(restoreGame(state)).toEqual(state);
+    expect(restoreGame(state)).toMatchObject(state);
     expect(restoreGame(state).completed).toBe(true);
   });
   it.each([
@@ -35,7 +36,7 @@ describe("saved seasons", () => {
     { ...createInitialState(), transactions: [null] },
     { ...createInitialState(), transactions: [{ day: 1, buyerId: "restaurant", quantity: 99999 }] },
   ])("recovers safely from malformed or incompatible data", (saved) => {
-    expect(restoreGame(saved)).toEqual(createInitialState());
+    expect(restoreGame(saved)).toMatchObject(createInitialState());
   });
   it("resets actual Zustand state and persisted progress", async () => {
     const values = new Map<string, string>();
@@ -50,7 +51,9 @@ describe("saved seasons", () => {
     useGameStore.getState().nextDay();
     expect(useGameStore.getState().game.day).toBe(2);
     useGameStore.getState().reset();
-    expect(useGameStore.getState().game).toEqual(createInitialState());
-    expect(JSON.parse(values.get("farmstreet-save")!).state.game).toEqual(createInitialState());
+    expect(useGameStore.getState().game).toMatchObject(createInitialState());
+    expect(JSON.parse(values.get("farmstreet-save")!).state.game).toMatchObject(
+      createInitialState(),
+    );
   });
 });

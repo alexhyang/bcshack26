@@ -1,15 +1,15 @@
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import { marketProvider } from "@/data/simulated-provider";
+import { getMarketForGame, getMarketHistory } from "@/features/pricing/market";
 import { priceMovement } from "@/engine/market";
-import type { BuyerId } from "@/types/game";
+import type { BuyerId, GameState } from "@/types/game";
 export const CHANNEL_COLORS: Record<BuyerId, string> = {
   wholesaler: "#60a5fa",
   retailer: "#a78bfa",
   restaurant: "#34d399",
 };
-export function MarketWatch({ day }: { day: number }) {
-  const current = marketProvider.getDay(day);
-  const previous = day > 1 ? marketProvider.getDay(day - 1) : undefined;
+export function MarketWatch({ game }: { game: GameState }) {
+  const current = getMarketForGame(game);
+  const previous = getMarketHistory(game).at(-2);
   return (
     <div className="market-watch">
       {current.offers.map((offer, index) => {

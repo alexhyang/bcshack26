@@ -6,6 +6,8 @@ import { createInitialState, advanceDay } from "@/engine/game";
 import { executeSale } from "@/engine/trading";
 import { marketProvider } from "@/data/simulated-provider";
 import { restoreGame } from "@/engine/saves";
+import { createMarketSeed } from "@/features/pricing/random";
+const freshSeason = () => createInitialState(marketProvider, { seed: createMarketSeed() });
 
 interface GameStore {
   game: GameState;
@@ -17,7 +19,7 @@ interface GameStore {
 export const useGameStore = create<GameStore>()(
   persist(
     (set, get) => ({
-      game: createInitialState(),
+      game: freshSeason(),
       sell: (buyer, quantity) => {
         const current = get().game;
         const result = executeSale(current, marketProvider.getDay(current.day), buyer, quantity);
@@ -29,7 +31,7 @@ export const useGameStore = create<GameStore>()(
         if (result.ok) set({ game: result.state });
         return result;
       },
-      reset: () => set({ game: createInitialState() }),
+      reset: () => set({ game: freshSeason() }),
     }),
     {
       name: "farmstreet-save",
@@ -37,9 +39,14 @@ export const useGameStore = create<GameStore>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ game: state.game }),
       skipHydration: true,
+      onRehydrateStorage: () => (state, error) => {
+        // Save the opening seed (and any migrated save) before the first trade.
+        // Otherwise reloading a brand-new Day 1 could accidentally reroll demand.
+        if (state && !error) useGameStore.setState({ game: state.game });
+      },
       merge: (persisted, current) => {
         const saved = (persisted as { game?: unknown } | null)?.game;
-        return { ...current, game: restoreGame(saved) };
+        return saved ? { ...current, game: restoreGame(saved) } : current;
       },
     },
   ),

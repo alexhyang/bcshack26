@@ -7,6 +7,7 @@ export const CROP: Readonly<Crop> = Object.freeze({
   name: "Carrots",
   symbol: "CRT",
   initialInventory: 1000,
+  freshnessSensitivity: 0.5,
 });
 
 function offers(
@@ -56,8 +57,10 @@ function event(
   return { id, category, headline, impact, explanation, sentiment };
 }
 
-// All prices, capacities and expenses BELOW ALREADY INCLUDE event effects.
-// The engine never reapplies them. These are fictional teaching values, not market quotes.
+// Legacy fixed prices are retained to replay existing transactions without repricing them.
+// Dynamic seasons replace these prices through features/pricing; capacities, costs,
+// and holding rates already include scenario events and are never modified twice.
+// Every value here is fictional, not a live market quote.
 const scenario: MarketDay[] = [
   {
     day: 1,

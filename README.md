@@ -16,7 +16,7 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000). The game starts with a complete scenario. Progress automatically saves in this browser’s localStorage. Reset Game clears the current season and starts fresh.
 
 ```bash
-npm test               # 46 unit and state tests
+npm test               # 83 unit and state tests
 npm run test:watch     # watch tests during development
 npm run typecheck     # TypeScript checks
 npm run lint          # Next.js, accessibility, and React lint rules
@@ -33,7 +33,7 @@ A spotlight tour opens automatically every time you launch or reload the game, i
 1. Compare today’s wholesale, retail, and restaurant offers. Each has its own capacity, delivery fee, and per-kg handling/packaging cost.
 2. Select a buyer, enter kilograms (up to two decimal places), and review the full cost breakdown. Percent buttons use the smaller of remaining inventory and that buyer’s capacity.
 3. Confirm the sale. Inventory and cash update immediately. Each buyer accepts **one order per day**, even if you do not use all its capacity.
-4. Choose **Next day**, review the holding costs, and advance. Storage is charged on remaining inventory **before** spoilage is removed. The current day’s displayed holding rates govern that overnight period.
+4. Choose **Next Market Day**, review the holding costs, and advance. Storage is charged on remaining inventory **before** spoilage is removed. The current day’s displayed holding rates govern that overnight period.
 5. Trade on Day 7, then choose **End season** to see your results. Advancing from Day 6 does not end the game. There is no extra storage charge after the final session.
 
 Today’s buyer cards highlight the highest net return **per kg at each buyer’s maximum feasible quantity**. This is a comparison, not a guaranteed optimal strategy. Intraday chart traces are illustrative observations for days already revealed; actual orders execute at the daily buyer quote. Chart range and channel toggles work without exposing future sessions.
@@ -47,12 +47,26 @@ Today’s buyer cards highlight the highest net return **per kg at each buyer’
 - Currency and kilograms round to two decimal places. Variable fees and gross revenue round independently, then net return is calculated from those rounded amounts.
 - A low-volume order can lose money because of its delivery fee. The preview warns you, but valid loss-making orders are allowed.
 - Starting cash is $0. Storage and loss-making orders can produce a negative cash balance; this simulator does not impose a financing constraint.
-- Freshness is a quality indicator. Spoilage directly reduces saleable inventory; freshness does not apply a second price discount.
+- Freshness reduces buyer prices through the centralized crop- and channel-specific pricing formula. Spoilage independently removes kilograms from inventory. The existing freshness value is reused; there is no second freshness clock.
 - Remaining inventory after the final session has **zero salvage value**. Results list spoiled and unsold quantities separately and in total.
 - Production costs are excluded. **Net selling margin is not full farm profit.**
-- Baseline: sell all 1,000 kg to the Day 1 wholesaler at $1.12/kg, less $24 delivery and $0.12/kg handling = **$976**. Its 1,000 kg capacity makes this baseline feasible.
+- Baseline: sell all 1,000 kg to the Day 1 wholesaler under the same opening conditions, after delivery and handling. Medium demand at the $1.12 market reference gives **$976**; new seasons can have a different baseline because opening demand is randomized. Migrated seasons with original trades retain their original $976 baseline.
 
-The scenario includes a restaurant demand surge, bumper harvest, highway closure, grocery promotion, extreme heat, and supply shortage. Daily prices, capacities, and expenses **already include** their event effects, so the engine never applies a modifier twice. No future events or prices appear in the UI. The scenario is deterministic and inspectable in the source; it is not a secrecy or anti-cheating system.
+The scenario retains its restaurant capacity surge, bumper harvest, highway closure, grocery promotion, extreme heat, and supply shortage. Capacity, delivery/storage expenses, and spoilage remain driven by the existing scenario. Buyer prices now come from one formula: **market base × channel × freshness × demand**. Daily shocks update the market base; they do not reapply scenario price modifiers. No future events or prices appear in the UI.
+
+## Dynamic pricing
+
+The feature is organized under [`features/pricing/`](features/pricing/README.md), including configuration, seeded daily simulation, pure calculations, selectors, UI, and tests. No dependencies were added.
+
+- Open **Show Price Breakdown** above today’s buyer cards to compare every multiplier and the highest quoted price per kg.
+- The market strip shows the current base price, actual daily base-price movement, and a HIGH/MEDIUM/LOW demand badge. Buyer quote movements in the chart also include freshness and demand.
+- The breakdown contains a read-only market watch for lettuce, tomatoes, strawberries, and potatoes. All five crops receive independent daily demand and shock rolls; carrots remain the playable crop.
+- **Next Market Day** uses the existing day action, applies holding costs and freshness decay, generates one new saved market snapshot, and recalculates all quotes. Day 7 still ends through **End season**.
+- New seasons get a random seed. Their market history is reproducible from that seed and does not reroll on rendering, trading, reopening the breakdown, or reloading.
+- Existing saves migrate on load. Already executed transactions, balances, inventory, freshness, and day recaps retain their values. Dynamic pricing starts on the saved current day for subsequent orders. A legacy order already placed today still consumes that buyer’s one order for today.
+- Providers explicitly marked `mode: "live"` bypass simulation pricing. No external data connection is present or required.
+
+See the [feature guide](features/pricing/README.md) for balance settings, formulas, assumptions, and a step-by-step verification flow.
 
 ## Architecture
 
@@ -67,6 +81,7 @@ components/
   results/            Season results, baseline comparison, takeaways
   ui/                 Local shadcn/ui Button and Radix Dialog components
   tutorial/           Automatic spotlight tour, page targets, positioning, styles
+features/pricing/     Dynamic pricing config, seeded simulation, breakdown UI, tests
 engine/
   game.ts             Pure initialization and daily transitions
   trading.ts          Validation, cost preview, immutable order execution
@@ -89,9 +104,9 @@ React components render and collect input. They invoke Zustand actions rather th
 
 ## Verification
 
-46 Vitest tests cover eligible and rejected sales, exact expenses, fractional kilograms, immutable state, different buyers, one order per buyer/day, stale quotes, negative-return orders, holding costs, event rates, daily availability, trading on Day 7, finishing the game, no phantom final overnight charge, harvest conservation, cash reconciliation, final scoring, revealed-only history, replayed saves, corrupt saves, actual Zustand reset persistence, and responsive spotlight-tour positioning, and isolated development/production output folders.
+83 Vitest tests cover original trading/accounting, storage/spoilage, the seven-day loop, reset, saved-state recovery, tour positioning, build-output isolation, and 37 dynamic-pricing cases. Pricing tests verify the full freshness curve, lettuce’s 80% channel reversal, demand weights and exact bucket boundaries, crop-specific shock probabilities/magnitudes, 50/50 directions, price caps, daily stability, quote/preview/execution agreement, every crop’s daily rolls, seven-day replay, legacy migration, and live-provider isolation.
 
-Manual production-browser verification covered desktop and mobile layouts, maximum-capacity sales, same-day sales to different buyers, save/reload, advancing through every market event, trading on Day 7, final results, and Play Again. A complete run (160 kg to the Day 1 restaurant, then 220 kg to the Day 7 restaurant and the remaining 453.86 kg to wholesale) produced **$1,131.17** after selling and storage expenses, **$155.17 above baseline**. The production route returned HTTP 200 with no browser console errors or warnings.
+The original fixed-price tests remain explicit legacy fixtures so migrated orders retain their original accounting. New pricing tests exercise the default dynamic game and exact persisted-state replay. Browser verification includes the actual dashboard, breakdown panel, a sale, advancement, and save/reload.
 
 ![FarmStreet dashboard](docs/farmstreet-dashboard.png)
 
@@ -112,6 +127,6 @@ You can also run `npx vercel` from the repository if you already have a Vercel a
 
 ## MVP scope
 
-One crop, one deterministic seven-day scenario, three fictional buyer channels, and browser-local saves. Each order settles immediately; there are no in-transit shipments, financing costs, full production budgets, or inventory purchases. Refreshing preserves progress within the same browser and origin; saves do not sync between devices. If localStorage is blocked, the game remains playable in memory and displays a warning.
+One playable crop, five simulated crop markets, a seven-day scenario with seeded market variation, three fictional buyer channels, and browser-local saves. Each order settles immediately; there are no in-transit shipments, financing costs, full production budgets, or inventory purchases. Refreshing preserves progress within the same browser and origin; saves do not sync between devices. If localStorage is blocked, the game remains playable in memory and displays a warning.
 
 Built with Next.js App Router, React, TypeScript, Tailwind CSS v4, shadcn/ui patterns with Radix primitives, Recharts, Zustand persist, Lucide, and Vitest. The lockfile records the installed dependency versions.

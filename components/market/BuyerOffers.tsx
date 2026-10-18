@@ -8,7 +8,8 @@ import {
   Truck,
 } from "lucide-react";
 import type { BuyerId, GameState } from "@/types/game";
-import { marketProvider } from "@/data/simulated-provider";
+import { getMarketForGame } from "@/features/pricing/market";
+import { PriceBreakdown } from "@/features/pricing/components/PriceBreakdown";
 import { previewOrder } from "@/engine/trading";
 import { kg, money } from "@/lib/utils";
 import { CHANNEL_COLORS } from "./MarketWatch";
@@ -26,7 +27,7 @@ export function BuyerOffers({
   selected: BuyerId;
   onSelect: (id: BuyerId) => void;
 }) {
-  const market = marketProvider.getDay(game.day);
+  const market = getMarketForGame(game);
   const best = [...market.offers]
     .filter(
       (o) =>
@@ -44,6 +45,7 @@ export function BuyerOffers({
         <h2>Today’s buyer offers</h2>
         <span className="subtle-label">One order per buyer / day</span>
       </div>
+      <PriceBreakdown game={game} />
       <div className="buyer-grid">
         {market.offers.map((offer) => {
           const Icon = BUYER_ICONS[offer.id];

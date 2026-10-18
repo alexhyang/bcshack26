@@ -11,14 +11,16 @@ import {
   YAxis,
 } from "recharts";
 import { ChartNoAxesCombined, ChevronDown, Info } from "lucide-react";
-import { marketProvider } from "@/data/simulated-provider";
+import { getMarketHistory } from "@/features/pricing/market";
+import type { GameState } from "@/types/game";
 import { MarketWatch, CHANNEL_COLORS } from "./MarketWatch";
 
-export function PriceChart({ day }: { day: number }) {
+export function PriceChart({ game }: { game: GameState }) {
+  const day = game.day;
   const [range, setRange] = useState("ALL");
   const [visible, setVisible] = useState({ wholesaler: true, retailer: true, restaurant: true });
   const points = useMemo(() => {
-    const history = marketProvider.getHistory(day);
+    const history = getMarketHistory(game);
     const filtered =
       range === "1D" ? history.slice(-1) : range === "3D" ? history.slice(-3) : history;
     // Intraday observations are illustrative, deterministic and limited to revealed days.
@@ -35,7 +37,7 @@ export function PriceChart({ day }: { day: number }) {
         restaurant: Number((market.offers[2].price * factor).toFixed(2)),
       })),
     );
-  }, [day, range]);
+  }, [game, range]);
   return (
     <section className="panel chart-panel" data-tour="price-chart">
       <div className="panel-heading">
@@ -65,7 +67,7 @@ export function PriceChart({ day }: { day: number }) {
           ))}
         </div>
       </div>
-      <MarketWatch day={day} />
+      <MarketWatch game={game} />
       <div
         className="price-chart"
         role="img"
@@ -96,7 +98,7 @@ export function PriceChart({ day }: { day: number }) {
               axisLine={false}
               tickLine={false}
               tick={{ fill: "#657487", fontSize: 10 }}
-              domain={[0.6, "auto"]}
+              domain={[0, "auto"]}
               tickFormatter={(value: number) => `$${value.toFixed(2)}`}
               width={54}
             />

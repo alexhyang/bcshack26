@@ -4,8 +4,14 @@ import type { DaySummary, GameResult, GameState } from "@/types/game";
 import { holdOvernight } from "./inventory";
 import { round } from "./trading";
 
-export function createInitialState(provider: MarketDataProvider = marketProvider): GameState {
-  return {
+import { advancePricing, enableDynamicPricing } from "@/features/pricing/market";
+import { DEFAULT_MARKET_SEED } from "@/features/pricing/config";
+
+export function createInitialState(
+  provider: MarketDataProvider = marketProvider,
+  options: { seed?: number; dynamicPricing?: boolean } = {},
+): GameState {
+  const initial: GameState = {
     scenarioId: provider.scenarioId,
     day: 1,
     inventory: provider.crop.initialInventory,
@@ -19,6 +25,9 @@ export function createInitialState(provider: MarketDataProvider = marketProvider
     summaries: [],
     completed: false,
   };
+  return options.dynamicPricing === false
+    ? initial
+    : enableDynamicPricing(initial, options.seed ?? DEFAULT_MARKET_SEED, 0, provider);
 }
 
 export function advanceDay(
@@ -65,6 +74,9 @@ export function advanceDay(
       cash: round(state.cash - overnight.storageCosts),
       spoiled: round(state.spoiled + overnight.spoiled),
       summaries: [...state.summaries, summary],
+      ...(state.pricing && !finalDay
+        ? { pricing: advancePricing(state.pricing, state.day + 1, overnight.freshness, provider) }
+        : {}),
     },
   };
 }

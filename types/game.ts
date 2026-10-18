@@ -1,3 +1,4 @@
+import type { DynamicPricingState, PriceBreakdown } from "@/features/pricing/types";
 export type BuyerId = "wholesaler" | "retailer" | "restaurant";
 export type GameView = "dashboard" | "history" | "results";
 
@@ -6,6 +7,7 @@ export interface Crop {
   name: string;
   symbol: string;
   initialInventory: number;
+  freshnessSensitivity?: number;
 }
 
 export interface BuyerOffer {
@@ -16,6 +18,7 @@ export interface BuyerOffer {
   capacity: number;
   fixedCost: number;
   variableCost: number;
+  pricing?: PriceBreakdown;
 }
 
 export interface MarketEvent {
@@ -50,6 +53,7 @@ export interface Transaction {
   variableCost: number;
   sellingCosts: number;
   netReturn: number;
+  pricing?: PriceBreakdown;
 }
 
 export interface DaySummary {
@@ -75,6 +79,7 @@ export interface GameState {
   transactions: Transaction[];
   summaries: DaySummary[];
   completed: boolean;
+  pricing?: DynamicPricingState;
 }
 
 export interface OrderPreview {
