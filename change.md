@@ -38,3 +38,22 @@
 - All 52 tests passed across six test files.
 - TypeScript typecheck and ESLint passed.
 - Browser verification covered revealing a card, adjusted prices and previews, closed buyers, a new draw on the next day, and persistence after reload.
+
+## Scenario card explanations
+
+- Revealed cards now show each channel's buff or nerf, exact multiplier, percentage change, and a short scenario-specific explanation.
+- Cards label their effect from the farmer's perspective: Positive when channels only improve, Negative when channels only worsen, and Mixed when some improve while others worsen. Closures count as negative channel effects.
+- Added matching card colours and a wider revealed-card layout, with the selected card above the hidden cards on small screens.
+
+## Peaceful days and scenario probabilities
+
+- Each face-down card now has a 50% chance of “Today is a peaceful day”, with no effect on price and all channel multipliers at ×1.00.
+- The 12 existing scenarios collectively share the remaining 50%, giving each a 1/24 (approximately 4.17%) chance of being selected through a hidden card position. These are per-draw probabilities, not a guaranteed quota over seven days.
+- Peaceful outcomes may appear more than once in a hand. Track the chosen card position so only one card reveals; preserve hands and choices on reload, including older saves.
+- Added probability, peaceful-price, and save-restoration regression tests.
+
+### Latest local integration validation
+
+- Integrated scenario summaries and 50% peaceful-day draws with the remote dynamic-pricing module.
+- Preserved the scenario identifier used to prevent double application of price multipliers; updated the peaceful-day test to compare unchanged buyer offers while allowing this metadata.
+- All 108 tests passed after integration, along with TypeScript typecheck and ESLint.

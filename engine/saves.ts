@@ -72,7 +72,14 @@ export function restoreGame(value: unknown): GameState {
         !hand ||
         !Array.isArray(hand.cards) ||
         hand.cards.length !== 3 ||
-        new Set(hand.cards).size !== 3 ||
+        new Set(hand.cards.filter((id) => id !== "peaceful")).size !==
+          hand.cards.filter((id) => id !== "peaceful").length ||
+        (hand.selectedIndex !== undefined &&
+          (!Number.isInteger(hand.selectedIndex) ||
+            hand.selectedIndex < 0 ||
+            hand.selectedIndex > 2 ||
+            hand.selected === undefined ||
+            hand.cards[hand.selectedIndex] !== hand.selected)) ||
         hand.cards.some((id) => !SCENARIO_EVENTS.some((e) => e.id === id)) ||
         (hand.selected !== undefined && !hand.cards.includes(hand.selected)) ||
         ((day < (saved.day as number) || saved.completed) && !hand.selected)

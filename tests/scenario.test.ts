@@ -9,6 +9,9 @@ import { restoreGame } from "@/engine/saves";
 import { marketProvider } from "@/data/simulated-provider";
 
 import {
+  SCENARIO_EVENTS,
+  SCENARIO_CHANNEL_REASONS,
+  scenarioSentiment,
   chooseScenario,
   dealScenarios,
   getScenario,
@@ -32,8 +35,9 @@ function select(index: number) {
 }
 
 describe("daily scenarios", () => {
-  it("deals three distinct cards and keeps a hand stable", () => {
-    expect(new Set(dealScenarios(() => 0)).size).toBe(3);
+  it("deals three cards and keeps a hand stable", () => {
+    expect(dealScenarios(() => 0)).toEqual(["peaceful", "peaceful", "peaceful"]);
+    expect(new Set(dealScenarios(() => 0.5)).size).toBe(3);
 
     const state = prepareScenario(createInitialState());
 
@@ -112,4 +116,48 @@ describe("daily scenarios", () => {
 
     expect(prepareScenario(restoreGame(sale.state))).toEqual(sale.state);
   });
+});
+
+it("labels grower benefits, penalties, and mixed effects and explains every channel", () => {
+  const find = (id: string) => SCENARIO_EVENTS.find((event) => event.id === id)!;
+  expect(scenarioSentiment(find("frost"))).toBe("positive");
+  expect(scenarioSentiment(find("bumper"))).toBe("negative");
+  expect(scenarioSentiment(find("holiday"))).toBe("mixed");
+  expect(scenarioSentiment(find("strike"))).toBe("mixed");
+  for (const event of SCENARIO_EVENTS) {
+    for (const buyer of ["wholesaler", "retailer", "restaurant"] as const) {
+      expect(SCENARIO_CHANNEL_REASONS[event.id][buyer].length).toBeGreaterThan(0);
+    }
+  }
+});
+
+it("splits each card equally between peaceful and the twelve event outcomes", () => {
+  // Exact grid across both random draws: no flaky statistical sampling.
+  const counts = new Map<string, number>();
+  for (let coin = 0; coin < 24; coin++) {
+    for (let event = 0; event < 12; event++) {
+      let call = 0;
+      const hand = dealScenarios(() => (call++ === 0 ? (coin + 0.5) / 24 : (event + 0.5) / 12));
+      counts.set(hand[0], (counts.get(hand[0]) ?? 0) + 1);
+    }
+  }
+  expect(counts.get("peaceful")).toBe(144);
+  for (const scenario of SCENARIO_EVENTS.filter((e) => e.id !== "peaceful"))
+    expect(counts.get(scenario.id)).toBe(12);
+});
+
+it("restores repeated peaceful cards and keeps all channel prices and capacities unchanged", () => {
+  const initial = {
+    ...createInitialState(),
+    dailyScenarios: { 1: { cards: ["peaceful", "peaceful", "peaceful"] } },
+  };
+  const picked = chooseScenario(initial, 1);
+  if (!picked.ok) throw Error(picked.error);
+  expect(picked.state.dailyScenarios?.[1].selectedIndex).toBe(1);
+  expect(scenarioMarket(picked.state, marketProvider.getDay(1)).offers).toEqual(
+    marketProvider.getDay(1).offers,
+  );
+  expect(scenarioSentiment(getScenario(picked.state)!)).toBe("neutral");
+  expect(restoreGame(picked.state)).toEqual(picked.state);
+  expect(chooseScenario(picked.state, 0).ok).toBe(false);
 });

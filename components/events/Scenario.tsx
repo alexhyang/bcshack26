@@ -2,7 +2,7 @@
 
 import { Sparkles, Sprout, LockKeyhole } from "lucide-react";
 
-import { getScenario } from "@/engine/scenario";
+import { getScenario, scenarioSentiment, SCENARIO_CHANNEL_REASONS } from "@/engine/scenario";
 
 import { useGameStore } from "@/store/gameStore";
 
@@ -15,6 +15,7 @@ export function Scenario({ game }: { game: GameState }) {
 
   const selected = getScenario(game);
 
+  const sentiment = selected ? scenarioSentiment(selected) : null;
   if (!hand) return null;
 
   return (
@@ -40,14 +41,15 @@ export function Scenario({ game }: { game: GameState }) {
       </div>
 
       <div className="scenario-cards">
-        {hand.cards.map((id, index) => {
-          const revealed = selected?.id === id;
+        {hand.cards.map((_, index) => {
+          const revealed =
+            !!selected && index === (hand.selectedIndex ?? hand.cards.indexOf(selected.id));
 
           return (
             <button
               key={index}
               type="button"
-              className={`scenario-card ${revealed ? "revealed" : "face-down"}`}
+              className={`scenario-card ${revealed ? `revealed scenario-${sentiment}` : "face-down"}`}
 
               disabled={!!selected || game.completed}
               onClick={() => pick(index)}
@@ -62,7 +64,26 @@ export function Scenario({ game }: { game: GameState }) {
                 <>
                   <Sparkles size={24} />
                   <strong>{selected.title}</strong>
-                  <span>ACTIVE TODAY</span>
+                  <span className={`scenario-sentiment ${sentiment}`}>{sentiment} card</span>
+                  <span className="scenario-card-summary">
+                    {Object.entries(selected.multipliers).map(([buyer, multiplier]) => (
+                      <span className="scenario-channel-summary" key={buyer}>
+                        <b>
+                          {buyer} ·{" "}
+                          {selected.closed === buyer
+                            ? "Closed (×0.00)"
+                            : `${multiplier > 1 ? "Buff" : multiplier < 1 ? "Nerf" : "Unchanged"} ×${multiplier.toFixed(2)} (${multiplier >= 1 ? "+" : ""}${Math.round((multiplier - 1) * 100)}%)`}
+                        </b>
+                        <span>
+                          {
+                            SCENARIO_CHANNEL_REASONS[selected.id]?.[
+                              buyer as keyof typeof selected.multipliers
+                            ]
+                          }
+                        </span>
+                      </span>
+                    ))}
+                  </span>
                 </>
               ) : (
                 <>

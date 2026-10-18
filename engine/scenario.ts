@@ -31,6 +31,15 @@ const event = (
 
 export const SCENARIO_EVENTS: readonly ScenarioEvent[] = [
   event(
+    "peaceful",
+    "Today is a peaceful day",
+    "No event",
+    "No effect on price. All three channels keep today’s base offers.",
+    1,
+    1,
+    1,
+  ),
+  event(
     "frost",
     "Frost across the valley",
     "Weather",
@@ -154,12 +163,13 @@ export const SCENARIO_EVENTS: readonly ScenarioEvent[] = [
 ];
 
 export function dealScenarios(random: () => number = Math.random): string[] {
-  const pool = [...SCENARIO_EVENTS];
-
-  return Array.from(
-    { length: 3 },
-    () => pool.splice(Math.min(pool.length - 1, Math.floor(random() * pool.length)), 1)[0].id,
-  );
+  const pool = SCENARIO_EVENTS.filter((scenario) => scenario.id !== "peaceful");
+  // Each hidden position independently has a 50% chance of no event.
+  // Non-peaceful events are sampled without replacement within a hand.
+  return Array.from({ length: 3 }, () => {
+    if (random() < 0.5) return "peaceful";
+    return pool.splice(Math.min(pool.length - 1, Math.floor(random() * pool.length)), 1)[0].id;
+  });
 }
 
 export function prepareScenario(state: GameState): GameState {
@@ -194,7 +204,7 @@ export function chooseScenario(state: GameState, index: number): GameResult {
       ...state,
       dailyScenarios: {
         ...state.dailyScenarios,
-        [state.day]: { ...hand, selected: hand.cards[index] },
+        [state.day]: { ...hand, selected: hand.cards[index], selectedIndex: index },
       },
     },
   };
@@ -242,3 +252,83 @@ export function scenarioMarket(state: GameState, base: Readonly<MarketDay>): Rea
     }),
   };
 }
+
+/** Sentiment is from the grower's perspective; mixed cards help some channels and hurt others. */
+export function scenarioSentiment(
+  scenario: ScenarioEvent,
+): "positive" | "negative" | "mixed" | "neutral" {
+  const values = Object.entries(scenario.multipliers).map(([buyer, value]) =>
+    scenario.closed === buyer ? 0 : value,
+  );
+  const buffs = values.some((value) => value > 1);
+  const nerfs = values.some((value) => value < 1);
+  return buffs && nerfs ? "mixed" : buffs ? "positive" : nerfs ? "negative" : "neutral";
+}
+
+export const SCENARIO_CHANNEL_REASONS: Record<string, Record<BuyerId, string>> = {
+  peaceful: {
+    wholesaler: "No event changes wholesale prices.",
+    retailer: "No event changes grocery prices.",
+    restaurant: "No event changes restaurant prices.",
+  },
+  frost: {
+    wholesaler: "Harvest losses tighten bulk supply.",
+    retailer: "Scarcer fresh stock raises grocery bids.",
+    restaurant: "Kitchens compete for fewer local carrots.",
+  },
+  rain: {
+    wholesaler: "Weaker dining demand reduces bulk orders.",
+    retailer: "More families cook at home.",
+    restaurant: "Rain keeps diners away.",
+  },
+  holiday: {
+    wholesaler: "Restaurant closures reduce bulk demand.",
+    retailer: "Home cooking lifts grocery demand.",
+    restaurant: "The closure order stops all restaurant buying.",
+  },
+  strike: {
+    wholesaler: "Striking warehouse staff cannot receive deliveries.",
+    retailer: "Stores pay extra for direct farm supply.",
+    restaurant: "Kitchens pay extra to bypass wholesalers.",
+  },
+  festival: {
+    wholesaler: "Festival orders lift bulk demand.",
+    retailer: "Extra visitors lift grocery sales slightly.",
+    restaurant: "Festival meals drive a surge in carrot orders.",
+  },
+  bumper: {
+    wholesaler: "A flood of bulk supply lowers bids.",
+    retailer: "Stores have more farms to buy from.",
+    restaurant: "Abundant carrots give kitchens cheaper options.",
+  },
+  imports: {
+    wholesaler: "Delayed imports tighten bulk supply.",
+    retailer: "Stores compete for local alternatives.",
+    restaurant: "Kitchens pay more to replace imports.",
+  },
+  school: {
+    wholesaler: "Large school contracts increase bulk demand.",
+    retailer: "School orders leave less stock for stores.",
+    restaurant: "Tighter local supply nudges kitchen bids up.",
+  },
+  heat: {
+    wholesaler: "Lower overall demand softens bulk bids.",
+    retailer: "Households continue stocking groceries.",
+    restaurant: "Lighter summer menus use fewer carrots.",
+  },
+  bridge: {
+    wholesaler: "Delayed freight tightens incoming supply.",
+    retailer: "Stores pay more for available local stock.",
+    restaurant: "Kitchens bid up produce available today.",
+  },
+  promotion: {
+    wholesaler: "Store restocking lifts bulk demand.",
+    retailer: "Carrot promotions drive a surge in sales.",
+    restaurant: "Competition for stock nudges bids up slightly.",
+  },
+  reopen: {
+    wholesaler: "Returning imports flood the bulk market.",
+    retailer: "More imported alternatives lower store bids.",
+    restaurant: "Cheaper alternatives reduce kitchen bids.",
+  },
+};

@@ -3072,3 +3072,65 @@ td:last-child {
     letter-spacing: 0;
   }
 }
+
+.scenario-cards:has(.revealed) {
+  grid-template-columns: 1fr 2.4fr 1fr;
+  align-items: stretch;
+}
+.scenario-card .scenario-sentiment {
+  border: 1px solid currentColor;
+  border-radius: 20px;
+  padding: 5px 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.scenario-sentiment.mixed,
+.scenario-sentiment.neutral {
+  color: #fcd78d;
+}
+.scenario-card.revealed.scenario-negative {
+  background: linear-gradient(140deg, #492830, #261d27);
+  border-color: #f18288;
+}
+.scenario-card.revealed.scenario-mixed {
+  background: linear-gradient(140deg, #403820, #242a2a);
+  border-color: #e9b65a;
+}
+.scenario-card .scenario-card-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+  width: 100%;
+}
+.scenario-card .scenario-channel-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  letter-spacing: normal;
+  line-height: 1.5;
+}
+.scenario-channel-summary b {
+  text-transform: capitalize;
+  font-size: 12px;
+  color: #f1f5f9;
+}
+.scenario-card .scenario-channel-summary > span {
+  color: #c4cfda;
+  font-size: 12px;
+  letter-spacing: normal;
+}
+@media (max-width: 600px) {
+  .scenario-cards:has(.revealed) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .scenario-card.revealed {
+    grid-column: 1 / -1;
+    order: -1;
+    padding: 20px;
+  }
+  .scenario-cards:has(.revealed) .face-down {
+    min-height: 85px;
+    gap: 8px;
+  }
+}
