@@ -3094,10 +3094,10 @@ td:last-child {
 .scenario-card.revealed {
   background: var(--surface);
   border-color: var(--sage-border);
-  animation: scenario-reveal 0.35s ease-out;
 }
 .scenario-card.face-down:disabled {
   opacity: 0.35;
+  transition: opacity 150ms ease;
 }
 .scenario-effects {
   display: flex;
@@ -3120,13 +3120,23 @@ td:last-child {
   color: var(--text-secondary);
   font-size: 12px;
 }
-@keyframes scenario-reveal {
+@keyframes scenario-center {
   from {
-    transform: rotateY(85deg);
+    transform: translateX(var(--scenario-from-x)) scaleX(var(--scenario-from-scale));
   }
   to {
-    transform: rotateY(0);
+    transform: translateX(0) scaleX(1);
   }
+}
+.scenario-cards.is-centering .revealed {
+  z-index: 1;
+  transform-origin: center;
+  animation: scenario-center var(--scenario-move-duration) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.scenario-cards.is-centering .scenario-card.face-down {
+  visibility: hidden;
+  opacity: 0;
+  transition: none;
 }
 @media (prefers-reduced-motion: reduce) {
   .scenario-card {

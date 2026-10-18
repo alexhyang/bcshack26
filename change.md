@@ -1,5 +1,11 @@
 # Changes
 
+## Scenario reveal movement
+
+- Temporarily hide both unchosen card backs while the selected card slides and expands from its original position into the centered half-width slot, then fade them back in after it settles.
+- Respect reduced-motion preferences with immediate placement. Keep animation state local and release hidden backs if the animation is interrupted; saved choices and game rules are unchanged.
+- Verified hidden card backs during movement, visible backs after settling, restored-save visibility, and the centered half-width result. TypeScript, ESLint, and production build pass.
+
 ## Centered chosen scenario card
 
 - After revealing any of the three cards, the chosen card moves to the center and occupies 50% of the deck width. The other two stay face-down, one on either side.

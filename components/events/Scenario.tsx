@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState, type CSSProperties } from "react";
 import { Sparkles, Sprout, LockKeyhole } from "lucide-react";
 
 import { getScenario, scenarioSentiment, SCENARIO_CHANNEL_REASONS } from "@/engine/scenario";
@@ -8,8 +9,23 @@ import { useGameStore } from "@/store/gameStore";
 
 import type { GameState } from "@/types/game";
 
+const CENTER_DURATION = 420;
+
 export function Scenario({ game }: { game: GameState }) {
   const pick = useGameStore((s) => s.pickScenario);
+  const [motion, setMotion] = useState<{
+    day: number;
+    seed: number | undefined;
+    index: number;
+    offset: number;
+    scale: number;
+  } | null>(null);
+  useEffect(() => {
+    if (!motion) return;
+    // Also release the card backs if the animation is interrupted or motion settings change.
+    const timeout = window.setTimeout(() => setMotion(null), CENTER_DURATION + 100);
+    return () => window.clearTimeout(timeout);
+  }, [motion]);
 
   const hand = game.dailyScenarios?.[game.day];
 
@@ -21,6 +37,27 @@ export function Scenario({ game }: { game: GameState }) {
   const indices = hand.cards.map((_, index) => index);
   const remaining = indices.filter((index) => index !== selectedIndex);
   const cardOrder = selected ? [remaining[0], selectedIndex, remaining[1]] : indices;
+  const centering =
+    !!selected &&
+    motion?.day === game.day &&
+    motion.seed === game.pricing?.seed &&
+    motion.index === selectedIndex;
+
+  function reveal(index: number, card: HTMLButtonElement) {
+    const deck = card.parentElement;
+    if (deck && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const start = card.getBoundingClientRect();
+      const bounds = deck.getBoundingClientRect();
+      setMotion({
+        day: game.day,
+        seed: game.pricing?.seed,
+        index,
+        offset: start.x + start.width / 2 - (bounds.x + bounds.width / 2),
+        scale: start.width / (bounds.width / 2),
+      });
+    }
+    pick(index);
+  }
 
   return (
     <section className="panel scenario-panel" aria-labelledby="scenario-heading">
@@ -44,7 +81,7 @@ export function Scenario({ game }: { game: GameState }) {
         <span className="scenario-tag">{selected ? selected.category : "CHOOSE 1 OF 3"}</span>
       </div>
 
-      <div className="scenario-cards">
+      <div className={`scenario-cards${centering ? " is-centering" : ""}`}>
         {cardOrder.map((index) => {
           const revealed = !!selected && index === selectedIndex;
 
@@ -53,9 +90,25 @@ export function Scenario({ game }: { game: GameState }) {
               key={index}
               type="button"
               className={`scenario-card ${revealed ? `revealed scenario-${sentiment}` : "face-down"}`}
+              style={
+                centering && revealed
+                  ? ({
+                      "--scenario-from-x": `${motion.offset}px`,
+                      "--scenario-from-scale": motion.scale,
+                      "--scenario-move-duration": `${CENTER_DURATION}ms`,
+                    } as CSSProperties)
+                  : undefined
+              }
 
               disabled={!!selected || game.completed}
-              onClick={() => pick(index)}
+              onClick={(event) => reveal(index, event.currentTarget)}
+              onAnimationEnd={(event) => {
+                if (
+                  event.target === event.currentTarget &&
+                  event.animationName === "scenario-center"
+                )
+                  setMotion(null);
+              }}
 
               aria-label={
                 revealed ? `Selected: ${selected.title}` : `Reveal scenario card ${index + 1}`
