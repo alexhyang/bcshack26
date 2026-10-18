@@ -1,0 +1,244 @@
+.tour-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+.tour-mask {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.tour-spotlight {
+  filter: none;
+}
+.tour-card {
+  position: fixed;
+  z-index: 61;
+  left: 16px;
+  bottom: 16px;
+  width: min(350px, calc(100vw - 32px));
+  max-height: calc(100dvh - 104px);
+  height: max-content;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 21px;
+  border: 1px solid var(--sage-border);
+  border-radius: 13px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: none;
+  outline: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-secondary) transparent;
+}
+.tour-card[style] {
+  bottom: auto;
+}
+.tour-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+.tour-card-header > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--forest);
+  font-size: 11px;
+  letter-spacing: 1.4px;
+}
+.tour-card-header > span:last-child {
+  color: var(--text);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.tour-card-header > span:last-child > span {
+  color: var(--text-secondary);
+}
+.tour-title {
+  font-size: 19px;
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: -0.4px;
+  outline: none;
+}
+.tour-description {
+  margin-top: 12px;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.85;
+}
+.tour-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface-subtle);
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.85;
+}
+.tour-hint svg {
+  flex-shrink: 0;
+  color: var(--forest);
+  margin-top: 3px;
+}
+.tour-progress {
+  display: flex;
+  gap: 5px;
+  margin-top: 17px;
+}
+.tour-progress button {
+  flex: 1;
+  min-width: 0;
+  height: 15px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  background: var(--surface-subtle);
+  background-clip: padding-box;
+  border-radius: 1px;
+}
+.tour-progress button.visited {
+  background-color: var(--sage-soft);
+}
+.tour-progress button[aria-current="step"] {
+  background-color: var(--sage-soft);
+}
+.tour-progress button:hover {
+  background-color: var(--sage-soft);
+}
+.tour-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+.tour-actions button {
+  font-size: 12px;
+}
+.tour-skip {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 37px;
+  padding: 0 13px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  box-shadow: none;
+  font-size: 12px;
+  z-index: 62;
+}
+.tour-skip:hover {
+  background: var(--surface);
+  border-color: var(--sage-border);
+  color: var(--text);
+}
+@media (max-width: 700px) {
+  .tour-card {
+    padding: 18px;
+    border-radius: 12px;
+  }
+  .tour-title {
+    font-size: 18px;
+  }
+  .tour-description {
+    font-size: 12px;
+    line-height: 1.85;
+    margin-top: 9px;
+  }
+  .tour-hint {
+    font-size: 11px;
+    margin-top: 12px;
+    padding: 9px;
+  }
+  .tour-card-header {
+    margin-bottom: 10px;
+  }
+  .tour-progress {
+    margin-top: 10px;
+  }
+  .tour-actions {
+    margin-top: 8px;
+  }
+  .tour-skip {
+    top: 12px;
+    right: 16px;
+    height: 34px;
+    font-size: 12px;
+  }
+}
+
+/* The tutorial shares the exchange's paper-and-sage surfaces. */
+.tour-spotlight {
+  filter: none;
+}
+.tour-card {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--sage-border);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px var(--overlay);
+  scrollbar-color: var(--sage-border) transparent;
+}
+.tour-card-header > span:first-child {
+  color: var(--forest);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.tour-card-header > span:last-child {
+  color: var(--text-secondary);
+  font-family: var(--font-numeric);
+}
+.tour-title {
+  color: var(--forest);
+  font-weight: 650;
+}
+.tour-description {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.tour-hint {
+  background: var(--sage-soft);
+  color: var(--text-secondary);
+  border-color: var(--sage-border);
+  font-size: 11px;
+  line-height: 1.65;
+}
+.tour-progress button {
+  background-color: var(--line);
+}
+.tour-progress button.visited {
+  background-color: var(--sage);
+}
+.tour-progress button[aria-current="step"] {
+  background-color: var(--forest);
+}
+.tour-progress button:hover {
+  background-color: var(--sage);
+}
+.tour-skip {
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--forest);
+  box-shadow: none;
+}
+.tour-skip:hover {
+  background: var(--sage-soft);
+  border-color: var(--sage);
+  color: var(--forest);
+}
+.tour-actions button {
+  font-size: 12px;
+}
