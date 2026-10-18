@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles, Sprout } from "lucide-react";
+import { Sparkles, Sprout, LockKeyhole } from "lucide-react";
 
 import { getScenario, scenarioSentiment, SCENARIO_CHANNEL_REASONS } from "@/engine/scenario";
 
@@ -40,12 +40,11 @@ export function Scenario({ game }: { game: GameState }) {
         <span className="scenario-tag">{selected ? selected.category : "CHOOSE 1 OF 3"}</span>
       </div>
 
-      <div className={`scenario-cards ${selected ? "has-selection" : ""}`}>
+      <div className="scenario-cards">
         {hand.cards.map((_, index) => {
           const revealed =
             !!selected && index === (hand.selectedIndex ?? hand.cards.indexOf(selected.id));
 
-          if (selected && !revealed) return null;
           return (
             <button
               key={index}
@@ -90,7 +89,7 @@ export function Scenario({ game }: { game: GameState }) {
                 <>
                   <Sprout size={30} />
                   <strong>FARMSTREET</strong>
-                  <span>{`REVEAL CARD 0${index + 1}`}</span>
+                  <span>{selected ? <LockKeyhole size={14} /> : `REVEAL CARD 0${index + 1}`}</span>
                 </>
               )}
             </button>

@@ -1,3 +1,4 @@
+import { CROP_CHOICES } from "@/data/crops";
 import { ArrowUpRight, ArrowRightLeft, ReceiptText } from "lucide-react";
 import type { GameState } from "@/types/game";
 import { kg, money } from "@/lib/utils";
@@ -44,6 +45,7 @@ export function TradeHistory({
             <thead>
               <tr>
                 <th>Session</th>
+                <th>Crop</th>
                 <th>Buyer</th>
                 <th>Quantity</th>
                 <th>Price / kg</th>
@@ -56,6 +58,9 @@ export function TradeHistory({
                 <tr key={trade.id}>
                   <td>
                     <span className="day-chip">Day {trade.day}</span>
+                  </td>
+                  <td>
+                    {CROP_CHOICES.find((crop) => crop.id === (trade.cropId ?? "carrots"))?.name}
                   </td>
                   <td>
                     <span className="table-buyer">

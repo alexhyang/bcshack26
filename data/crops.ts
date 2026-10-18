@@ -422,19 +422,17 @@ export const CROP_CHOICES = [
 ] as const;
 
 export function getGameCrop(state: GameState, fallback: Readonly<Crop> = CROP): Readonly<Crop> {
-  const selected = CROP_CHOICES.find((crop) => crop.id === state.harvest?.cropId);
-  return selected ? { ...selected, initialInventory: state.harvest!.initialInventory } : fallback;
+  const selected = CROP_CHOICES.find((crop) => crop.id === state.activeCropId);
+  const position = state.cropInventory?.find((item) => item.cropId === state.activeCropId);
+  return selected ? { ...selected, initialInventory: position?.initialInventory ?? 0 } : fallback;
 }
-
-export function validHarvest(value: unknown): value is NonNullable<GameState["harvest"]> {
-  if (!value || typeof value !== "object") return false;
-  const harvest = value as NonNullable<GameState["harvest"]>;
+export function validCropQuantity(cropId: unknown, quantity: unknown): boolean {
   return (
-    CROP_CHOICES.some((crop) => crop.id === harvest.cropId) &&
-    typeof harvest.initialInventory === "number" &&
-    Number.isFinite(harvest.initialInventory) &&
-    harvest.initialInventory > 0 &&
-    harvest.initialInventory <= 100000000 &&
-    Math.abs(harvest.initialInventory * 100 - Math.round(harvest.initialInventory * 100)) < 0.000001
+    CROP_CHOICES.some((crop) => crop.id === cropId) &&
+    typeof quantity === "number" &&
+    Number.isFinite(quantity) &&
+    quantity > 0 &&
+    quantity <= 100000000 &&
+    Math.abs(quantity * 100 - Math.round(quantity * 100)) < 0.000001
   );
 }

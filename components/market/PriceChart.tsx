@@ -10,10 +10,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { ChartNoAxesCombined, Info } from "lucide-react";
+import { ChartNoAxesCombined, ChevronDown, Info } from "lucide-react";
 import { getMarketHistory } from "@/features/pricing/market";
 import type { GameState } from "@/types/game";
-import { HarvestSelector } from "./HarvestSelector";
 import { getGameCrop } from "@/data/crops";
 import { MarketWatch, CHANNEL_COLORS } from "./MarketWatch";
 
@@ -70,7 +69,12 @@ export function PriceChart({ game }: { game: GameState }) {
         <span className="subtle-label">CAD / kg</span>
       </div>
       <div className="chart-toolbar">
-        <HarvestSelector key={`${crop.id}-${crop.initialInventory}`} game={game} />
+        <div className="crop-symbol">
+          <span className="symbol-box">{crop.symbol}</span>
+          <strong>{crop.name}</strong>
+          <span className="subtle-label">/ CAD</span>
+          <ChevronDown size={13} className="text-slate-500" />
+        </div>
         <div className="range-buttons" aria-label="Chart period">
           {["1D", "3D", "ALL"].map((period) => (
             <button

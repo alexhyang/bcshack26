@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { getMarketForGame } from "@/features/pricing/market";
 import { previewOrder, validateOrder } from "@/engine/trading";
 import { useGameStore } from "@/store/gameStore";
+import { tradeIsForActiveCrop } from "@/engine/portfolio";
+import { getGameCrop } from "@/data/crops";
 import type { BuyerId, GameState } from "@/types/game";
 import { kg, money } from "@/lib/utils";
 import { BUYER_ICONS } from "@/components/market/BuyerOffers";
@@ -22,7 +24,9 @@ export function SellPanel({
   const sell = useGameStore((state) => state.sell);
   const [quantity, setQuantity] = useState("100");
   const [message, setMessage] = useState<{ error: boolean; text: string } | null>(null);
-  const filled = game.transactions.some((t) => t.day === game.day && t.buyerId === selected);
+  const filled = game.transactions.some(
+    (t) => t.day === game.day && t.buyerId === selected && tradeIsForActiveCrop(game, t),
+  );
   const max = filled ? 0 : Math.min(offer.capacity, game.inventory);
   const amount = Number(quantity);
   const validAmount = Number.isFinite(amount) && amount > 0;
@@ -121,7 +125,7 @@ export function SellPanel({
             </div>
             <div className="order-hint">
               <Package size={12} />
-              {kg(game.inventory)} kg in your farm portfolio
+              {kg(game.inventory)} kg of {getGameCrop(game).name.toLowerCase()} available
             </div>
           </div>
           <div className="order-preview" data-tour="order-preview">

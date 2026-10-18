@@ -1,17 +1,7 @@
 "use client";
-import {
-  ArrowUpRight,
-  ChartNoAxesCombined,
-  History,
-  Trophy,
-  Sprout,
-  ChevronRight,
-  MapPin,
-  Leaf,
-} from "lucide-react";
+import { ArrowUpRight, ChartNoAxesCombined, History, Trophy, Sprout, MapPin } from "lucide-react";
 import type { GameState, GameView } from "@/types/game";
-import { getGameCrop } from "@/data/crops";
-import { kg } from "@/lib/utils";
+import { CropInventory } from "@/components/farm/CropInventory";
 export function Sidebar({
   game,
   view,
@@ -21,7 +11,6 @@ export function Sidebar({
   view: GameView;
   setView: (view: GameView) => void;
 }) {
-  const crop = getGameCrop(game);
   const nav = [
     { id: "dashboard", label: "Overview", icon: ChartNoAxesCombined },
     { id: "history", label: "Trade history", icon: History },
@@ -48,61 +37,7 @@ export function Sidebar({
         </nav>
       </div>
       <div className="portfolio-block">
-        <div className="sidebar-section-title">
-          <span className="eyebrow">FARM PORTFOLIO</span>
-          <span className="tiny-badge">01</span>
-        </div>
-        <div className="crop-preview">
-          <div className="carrot-art">
-            {crop.id === "carrots" ? <CarrotArt /> : <Sprout size={42} aria-hidden="true" />}
-          </div>
-          <div>
-            <strong>{crop.name}</strong>
-            <span>
-              {crop.symbol} <span className="text-slate-600">/</span> CAD
-            </span>
-          </div>
-          <ChevronRight size={15} className="ml-auto text-slate-600" />
-        </div>
-        <div className="inventory-number">
-          {kg(game.inventory)}
-          <span>kg</span>
-        </div>
-        <div className="text-xs text-slate-500">
-          of {kg(crop.initialInventory)} kg initial harvest
-        </div>
-        <div
-          className="inventory-meter"
-          role="progressbar"
-          aria-label="Inventory remaining"
-          aria-valuenow={game.inventory}
-          aria-valuemin={0}
-          aria-valuemax={crop.initialInventory}
-        >
-          <div
-            style={{ width: `${Math.min(100, (game.inventory / crop.initialInventory) * 100)}%` }}
-          />
-        </div>
-        <div className="sidebar-pair">
-          <span>Freshness</span>
-          <span className={game.freshness > 60 ? "positive" : "warning"}>
-            <Leaf size={12} />
-            {game.freshness}%
-          </span>
-        </div>
-        <div className="sidebar-pair">
-          <span>Status</span>
-          <span className="text-slate-300">
-            <span className={`status-dot ${game.inventory === 0 ? "muted" : ""}`} />
-            {game.completed
-              ? "Season closed"
-              : game.inventory === 0
-                ? "Sold out"
-                : game.freshness > 60
-                  ? "Market ready"
-                  : "Sell soon"}
-          </span>
-        </div>
+        <CropInventory game={game} />
       </div>
       <div className="sidebar-location">
         <MapPin size={13} /> Fraser Valley, BC<span>Canadian harvest · Season 01</span>
@@ -121,25 +56,5 @@ export function Sidebar({
         <span className="status-dot" /> Locally saved · No account needed
       </div>
     </aside>
-  );
-}
-export function CarrotArt() {
-  return (
-    <svg viewBox="0 0 80 80" fill="none" aria-hidden="true">
-      <path
-        d="m44 31 11-16M46 30l20-5M43 28l-2-16"
-        stroke="#61bc71"
-        strokeWidth="6"
-        strokeLinecap="round"
-      />
-      <path d="M49 29c9 6 10 13 3 21L22 71c-3 2-5 0-4-3l13-34c4-9 11-10 18-5Z" fill="#f8984c" />
-      <path
-        d="m32 38 10 5m-15 7 8 4m3-24 8 4"
-        stroke="#cc6c31"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <path d="M37 32c-5 7-12 26-15 33" stroke="#ffbd76" strokeWidth="3" strokeLinecap="round" />
-    </svg>
   );
 }

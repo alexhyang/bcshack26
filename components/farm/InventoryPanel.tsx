@@ -1,3 +1,4 @@
+import { totalInventory } from "@/engine/portfolio";
 import { Banknote, ChartNoAxesCombined, Package, Leaf, ArrowUpRight } from "lucide-react";
 import type { GameState } from "@/types/game";
 import { kg, money } from "@/lib/utils";
@@ -40,7 +41,7 @@ export function InventoryPanel({ game }: { game: GameState }) {
           <Package size={16} />
         </div>
         <div className="stat-value">
-          {kg(game.inventory)}
+          {kg(totalInventory(game))}
           <span>kg</span>
         </div>
         <div className="stat-foot">

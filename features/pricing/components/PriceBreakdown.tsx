@@ -175,7 +175,7 @@ export function PriceBreakdown({ game }: { game: GameState }) {
                 })}
               <p>
                 Each crop gets independent demand rolls for each channel and its own market shock
-                roll. Only your selected crop has playable inventory.
+                roll. Select a crop from your inventory to trade it.
               </p>
             </div>
             <DialogClose asChild>

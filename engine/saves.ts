@@ -1,4 +1,5 @@
-import { validHarvest } from "@/data/crops";
+import { CROP_CHOICES, validCropQuantity } from "@/data/crops";
+import { selectInventoryCrop } from "./portfolio";
 import { SCENARIO_EVENTS } from "./scenario";
 import { marketProvider } from "@/data/simulated-provider";
 import { advanceDay, createInitialState } from "./game";
@@ -21,10 +22,9 @@ export function restoreGame(value: unknown): GameState {
     typeof saved.completed !== "boolean" ||
     (saved.completed && saved.day !== marketProvider.duration) ||
     !Array.isArray(saved.transactions) ||
-    saved.transactions.length > marketProvider.duration * 3
+    saved.transactions.length > marketProvider.duration * 3 * CROP_CHOICES.length
   )
     return initial;
-  if (saved.harvest !== undefined && !validHarvest(saved.harvest)) return initial;
   const transactions = saved.transactions;
   if (
     transactions.some((trade: unknown) => {
@@ -59,10 +59,47 @@ export function restoreGame(value: unknown): GameState {
       pricing.legacyTransactionCount > transactions.length)
   )
     return initial;
-  let state = createInitialState(marketProvider, {
-    dynamicPricing: false,
-    ...(saved.harvest ? { harvest: saved.harvest as GameState["harvest"] } : {}),
-  });
+  let state = createInitialState(marketProvider, { dynamicPricing: false });
+  // Rebuild quantities from starting stock; cached remaining inventory is never trusted.
+  const savedItems = saved.cropInventory;
+  if (savedItems !== undefined) {
+    if (
+      !Array.isArray(savedItems) ||
+      savedItems.length > CROP_CHOICES.length ||
+      savedItems.some(
+        (item) =>
+          !item ||
+          typeof item !== "object" ||
+          !validCropQuantity(item.cropId, item.initialInventory),
+      ) ||
+      new Set(savedItems.map((item) => item.cropId)).size !== savedItems.length ||
+      (savedItems.length > 0 && !savedItems.some((item) => item.cropId === saved.activeCropId)) ||
+      (savedItems.length === 0 && (saved.activeCropId !== undefined || transactions.length > 0))
+    )
+      return initial;
+    state = {
+      ...state,
+      cropInventory: savedItems.map((item) => ({
+        cropId: item.cropId,
+        initialInventory: item.initialInventory,
+        inventory: item.initialInventory,
+        spoiled: 0,
+      })),
+      activeCropId: saved.activeCropId as string | undefined,
+      inventory:
+        savedItems.find((item) => item.cropId === saved.activeCropId)?.initialInventory ?? 0,
+    };
+  } else if (saved.harvest && typeof saved.harvest === "object") {
+    // Retain stock from the previous single-crop UI as one editable inventory entry.
+    const harvest = saved.harvest as { cropId: string; initialInventory: number };
+    if (!validCropQuantity(harvest.cropId, harvest.initialInventory)) return initial;
+    state = {
+      ...state,
+      cropInventory: [{ ...harvest, inventory: harvest.initialInventory, spoiled: 0 }],
+      activeCropId: harvest.cropId,
+      inventory: harvest.initialInventory,
+    };
+  }
   let index = 0;
   if (saved.dailyScenarios !== undefined) {
     if (
@@ -108,6 +145,12 @@ export function restoreGame(value: unknown): GameState {
         { version: pricing.version, startedDay: pricing.channelDemandStartedDay },
       );
     for (const t of transactions.filter((trade) => trade.day === day)) {
+      if (state.cropInventory) {
+        const cropId =
+          t.cropId ?? (saved.harvest as { cropId?: string } | undefined)?.cropId ?? "carrots";
+        if (!state.cropInventory.some((item) => item.cropId === cropId)) return initial;
+        state = selectInventoryCrop(state, cropId);
+      } else if (t.cropId !== undefined && t.cropId !== "carrots") return initial;
       const legacy = !pricing || index < pricing.legacyTransactionCount;
       if (
         pricing &&
@@ -133,6 +176,13 @@ export function restoreGame(value: unknown): GameState {
       state = result.state;
     }
   }
+  if (state.cropInventory)
+    state = selectInventoryCrop(
+      state,
+      (saved.activeCropId as string) ??
+        (saved.harvest as { cropId?: string } | undefined)?.cropId ??
+        state.activeCropId!,
+    );
   if (state.pricing?.version === 1) {
     state = {
       ...state,

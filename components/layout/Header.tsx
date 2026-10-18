@@ -63,9 +63,8 @@ export function Header({
           <DialogContent>
             <DialogTitle className="text-xl font-semibold">Start with a fresh harvest?</DialogTitle>
             <DialogDescription className="mt-3 text-sm leading-6 text-slate-400">
-              This replaces your saved season and all trades with a fresh harvest of your current
-              crop and starting kilograms on Day 1. You can then choose a different crop or harvest
-              size.
+              This starts a new season with your starting crop inventory and clears trades and
+              selling results. You can edit the inventory before your first sale.
             </DialogDescription>
             <div className="mt-6 flex justify-end gap-3">
               <DialogClose asChild>

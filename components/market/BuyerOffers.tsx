@@ -7,6 +7,8 @@ import {
   Check,
   Truck,
 } from "lucide-react";
+import { tradeIsForActiveCrop } from "@/engine/portfolio";
+import { getGameCrop } from "@/data/crops";
 import type { BuyerId, GameState } from "@/types/game";
 import { getMarketForGame } from "@/features/pricing/market";
 import { DemandBadge, PriceBreakdown } from "@/features/pricing/components/PriceBreakdown";
@@ -31,7 +33,9 @@ export function BuyerOffers({
   const best = [...market.offers]
     .filter(
       (o) =>
-        !game.transactions.some((t) => t.day === game.day && t.buyerId === o.id) &&
+        !game.transactions.some(
+          (t) => t.day === game.day && t.buyerId === o.id && tradeIsForActiveCrop(game, t),
+        ) &&
         game.inventory > 0 &&
         o.capacity > 0,
     )
@@ -43,15 +47,15 @@ export function BuyerOffers({
   return (
     <section className="buyers-section" data-tour="buyer-offers">
       <div className="section-heading">
-        <h2>Today’s buyer offers</h2>
-        <span className="subtle-label">One order per buyer / day</span>
+        <h2>Today’s buyer offers · {getGameCrop(game).name}</h2>
+        <span className="subtle-label">One order per crop / buyer / day</span>
       </div>
       <PriceBreakdown game={game} />
       <div className="buyer-grid">
         {market.offers.map((offer) => {
           const Icon = BUYER_ICONS[offer.id];
           const traded = game.transactions.some(
-            (t) => t.day === game.day && t.buyerId === offer.id,
+            (t) => t.day === game.day && t.buyerId === offer.id && tradeIsForActiveCrop(game, t),
           );
           const max = Math.min(game.inventory, offer.capacity);
           const net = max > 0 ? previewOrder(offer, max).netReturn / max : 0;

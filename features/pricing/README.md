@@ -104,7 +104,7 @@ npm run build
 
 ## Scope and extension
 
-Farmers select one playable crop from 42 Canadian-grown crop choices and set the starting kilograms before their first trade. Every configured crop has daily demand/shock snapshots and appears in the read-only market watch. The selected crop drives buyer quotes and results. Unknown existing crops get a default sensitivity of 0.65 (or their existing explicit value) and conservative default volatility rather than being removed.
+The sidebar inventory supports several playable crops from 42 configured choices. Selecting an inventory row chooses which crop is quoted and sold without changing the season day or cash. Daily demand/shock snapshots are shared across the season and remain stable when switching crops. Unknown existing crops get a default sensitivity of 0.65 (or their existing explicit value) and conservative default volatility rather than being removed.
 
 Balance parameters are centralized in `config.ts`. Future balance changes should version the pricing/save rules before changing the interpretation of historical seeded seasons. No authentication, payments, network data, or extra persistence backend is involved.
 

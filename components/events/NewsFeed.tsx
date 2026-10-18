@@ -1,3 +1,4 @@
+import { totalInventory } from "@/engine/portfolio";
 import { getScenario } from "@/engine/scenario";
 import {
   Radio,
@@ -32,7 +33,7 @@ const lessons = [
   },
   {
     title: "Your harvest has a shelf life.",
-    text: "Waiting means risking spoilage. A future price increase only helps the produce you still have left to sell.",
+    text: "Waiting means risking spoilage. A future price increase only helps the crops you still have left to sell.",
   },
   {
     title: "Count the cost of waiting.",
@@ -144,11 +145,11 @@ export function NewsFeed({ game }: { game: GameState }) {
           <CircleHelp size={13} />
           <span>
             {game.day === 7 ? (
-              "Final session: there are no more overnight storage or spoilage charges. Remaining produce count as unsold when you end the season."
+              "Final session: there are no more overnight storage or spoilage charges. Remaining crops count as unsold when you end the season."
             ) : (
               <>
-                Holding {kg(game.inventory)} kg tonight would cost{" "}
-                <b>{money(game.inventory * market.storageCostPerKg)}</b> before spoilage.
+                Holding {kg(totalInventory(game))} kg tonight would cost{" "}
+                <b>{money(totalInventory(game) * market.storageCostPerKg)}</b> before spoilage.
               </>
             )}
           </span>

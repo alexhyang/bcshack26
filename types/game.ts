@@ -44,6 +44,7 @@ export interface MarketDay {
 }
 
 export interface Transaction {
+  cropId?: string;
   id: string;
   day: number;
   buyerId: BuyerId;
@@ -68,8 +69,16 @@ export interface DaySummary {
   feedback: string;
 }
 
+export interface CropInventoryItem {
+  cropId: string;
+  initialInventory: number;
+  inventory: number;
+  spoiled: number;
+}
+
 export interface GameState {
-  harvest?: { cropId: string; initialInventory: number };
+  cropInventory?: CropInventoryItem[];
+  activeCropId?: string;
   dailyScenarios?: Record<number, { cards: string[]; selected?: string; selectedIndex?: number }>;
   scenarioId: string;
   day: number;

@@ -6,14 +6,19 @@ import { createInitialState, advanceDay } from "@/engine/game";
 import { executeSale } from "@/engine/trading";
 import { marketProvider } from "@/data/simulated-provider";
 import { restoreGame } from "@/engine/saves";
-import { validHarvest } from "@/data/crops";
+import { addInventoryCrop, removeInventoryCrop, selectInventoryCrop } from "@/engine/portfolio";
 import { createMarketSeed } from "@/features/pricing/random";
-const freshSeason = (harvest?: GameState["harvest"]) =>
-  createInitialState(marketProvider, { seed: createMarketSeed(), harvest });
+const freshSeason = (): GameState => ({
+  ...createInitialState(marketProvider, { seed: createMarketSeed() }),
+  cropInventory: [],
+  inventory: 0,
+});
 
 import { prepareScenario, chooseScenario } from "@/engine/scenario";
 interface GameStore {
-  configureHarvest: (cropId: string, quantity: number) => GameResult;
+  addInventory: (cropId: string, quantity: number) => GameResult;
+  removeInventory: (cropId: string) => void;
+  selectCrop: (cropId: string) => void;
   dealScenario: () => void;
   pickScenario: (index: number) => void;
   game: GameState;
@@ -26,23 +31,13 @@ export const useGameStore = create<GameStore>()(
   persist(
     (set, get) => ({
       game: freshSeason(),
-      configureHarvest: (cropId, quantity) => {
-        const current = get().game;
-        if (current.day !== 1 || current.completed || current.transactions.length > 0)
-          return { ok: false, error: "Start a new season to change your harvest after trading." };
-        const harvest = { cropId, initialInventory: quantity };
-        if (!validHarvest(harvest))
-          return {
-            ok: false,
-            error: "Choose a crop and enter 0.01–100,000,000 kg, using at most two decimal places.",
-          };
-        const game = {
-          ...createInitialState(marketProvider, { seed: current.pricing?.seed, harvest }),
-          dailyScenarios: current.dailyScenarios,
-        };
-        set({ game });
-        return { ok: true, state: game };
+      addInventory: (cropId, quantity) => {
+        const result = addInventoryCrop(get().game, cropId, quantity);
+        if (result.ok) set({ game: result.state });
+        return result;
       },
+      removeInventory: (cropId) => set({ game: removeInventoryCrop(get().game, cropId) }),
+      selectCrop: (cropId) => set({ game: selectInventoryCrop(get().game, cropId) }),
       dealScenario: () => set({ game: prepareScenario(get().game) }),
       pickScenario: (index) => {
         const result = chooseScenario(get().game, index);
@@ -65,7 +60,25 @@ export const useGameStore = create<GameStore>()(
 
         return result;
       },
-      reset: () => set({ game: freshSeason(get().game.harvest) }),
+      reset: () => {
+        const current = get().game;
+        const initial = freshSeason();
+        if (current.cropInventory) {
+          const items = current.cropInventory.map((item) => ({
+            ...item,
+            inventory: item.initialInventory,
+            spoiled: 0,
+          }));
+          set({
+            game: {
+              ...initial,
+              cropInventory: items,
+              activeCropId: current.activeCropId,
+              inventory: items.find((item) => item.cropId === current.activeCropId)?.inventory ?? 0,
+            },
+          });
+        } else set({ game: initial });
+      },
     }),
     {
       name: "farmstreet-save",

@@ -1,4 +1,6 @@
 "use client";
+import { CropInventory } from "@/components/farm/CropInventory";
+import { totalInventory } from "@/engine/portfolio";
 import { Scenario } from "@/components/events/Scenario";
 import { getScenario, scenarioPending } from "@/engine/scenario";
 import { useEffect, useState } from "react";
@@ -157,6 +159,9 @@ export function GameDashboard() {
               reload.
             </div>
           )}
+          <div className="mobile-crop-inventory">
+            <CropInventory game={game} />
+          </div>
           <InventoryPanel game={game} />
           {actualView === "results" ? (
             <Results game={game} onReset={restart} onContinue={() => setView("dashboard")} />
@@ -291,20 +296,20 @@ export function GameDashboard() {
           <div className="advance-preview">
             <div>
               <span>Inventory remaining</span>
-              <strong>{kg(game.inventory)} kg</strong>
+              <strong>{kg(totalInventory(game))} kg</strong>
             </div>
             {game.day < 7 ? (
               <>
                 <div>
                   <span>Overnight storage</span>
                   <strong className="warning">
-                    −{money(game.inventory * market.storageCostPerKg)}
+                    −{money(totalInventory(game) * market.storageCostPerKg)}
                   </strong>
                 </div>
                 <div>
                   <span>Expected spoilage</span>
                   <strong className="warning">
-                    {kg(Math.round(game.inventory * market.spoilageRate * 100) / 100)} kg (
+                    {kg(Math.round(totalInventory(game) * market.spoilageRate * 100) / 100)} kg (
                     {market.spoilageRate * 100}%)
                   </strong>
                 </div>
@@ -320,7 +325,7 @@ export function GameDashboard() {
               </div>
             )}
           </div>
-          {game.inventory > 0 && (
+          {totalInventory(game) > 0 && (
             <div className="info-note">
               <Info size={14} />
               {game.day === 7

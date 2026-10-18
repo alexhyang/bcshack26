@@ -73,11 +73,11 @@
 - Automatically fit the vertical axis to positive prices in the selected period and visible channels, with a small margin so lines fill the chart area.
 - Validation: TypeScript typecheck and ESLint passed.
 
-## Crop and harvest selection; centered scenario reveal
+## Corrected sidebar crop inventory
 
-- Replaced the fixed Carrots label with a grouped dropdown of 42 crops grown in Canada, including vegetables, fruit and berries, grains and oilseeds, and pulses.
-- Added a starting harvest input in kilograms and Apply harvest action. Farmers can configure the harvest on Day 1 before the first trade; reset keeps the selected crop and starting kilograms and unlocks editing again.
-- Selected crops drive the playable pricing model, chart, portfolio, initial inventory, result percentages, and wholesale benchmark. Selections persist and restore with validated saves; prior carrot seasons remain compatible.
-- Crop references remain fictional simulator prices. The seven-day schedule, buyer capacities, costs, demand, spoilage, and scenario rules keep their existing behavior.
-- Once a scenario is picked, removed both unselected cards and centered the revealed card with its channel effects.
-- Validation: 228 tests passed; TypeScript typecheck, ESLint, and the production build passed. Browser checks confirmed a 2,500 kg apple harvest updates quotes and inventory, survives reload, and keeps only the selected scenario card centered.
+- Reverted the previous chart-based harvest selector and single-crop setup. Restored the prior scenario-card layout as requested.
+- Replaced the carrot illustration in the left sidebar with a Crop dropdown, Quantity (kg) field, Add to inventory button, and an inventory list. The dropdown includes 42 crops grouped into vegetables, fruit and berries, grains and oilseeds, and pulses.
+- Farmers can add several crops, add more kg to an existing crop, remove an entry, and select a crop from the list to view its prices and sell its stock. New users start with an empty inventory; existing saved stock is retained.
+- Starting inventory is editable before the first sale. Selecting a crop never resets cash, trades, the current day, or the other crops. Each crop has its own stock and buyer orders; the shared daily scenario and market rules continue to apply.
+- Storage, spoilage, inventory totals, results, and save replay account for all inventory entries. Transaction history identifies the sold crop. Included a compact inventory builder on smaller screens where the sidebar collapses.
+- Validation: all 230 tests, TypeScript typecheck, ESLint, and the production build passed. Browser verification added 500 kg of apples and 250 kg of potatoes as separate sidebar entries and confirmed the 750 kg inventory and selected crop survive reload.

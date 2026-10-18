@@ -47,6 +47,7 @@ describe("saved seasons", () => {
     });
     const { useGameStore } = await import("@/store/gameStore");
     useGameStore.getState().reset();
+    useGameStore.getState().addInventory("carrots", 1000);
     useGameStore.getState().dealScenario();
     useGameStore.getState().pickScenario(0);
     useGameStore.getState().sell("restaurant", 100);

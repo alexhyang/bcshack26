@@ -1,3 +1,4 @@
+import { tradeIsForActiveCrop } from "./portfolio";
 import type { BuyerId, GameState, MarketDay } from "@/types/game";
 
 export function getBuyer(day: Readonly<MarketDay>, id: BuyerId) {
@@ -6,7 +7,13 @@ export function getBuyer(day: Readonly<MarketDay>, id: BuyerId) {
 
 export function remainingCapacity(state: GameState, day: Readonly<MarketDay>, id: BuyerId): number {
   const offer = getBuyer(day, id);
-  if (!offer || state.transactions.some((t) => t.day === state.day && t.buyerId === id)) return 0;
+  if (
+    !offer ||
+    state.transactions.some(
+      (t) => t.day === state.day && t.buyerId === id && tradeIsForActiveCrop(state, t),
+    )
+  )
+    return 0;
   return offer.capacity;
 }
 

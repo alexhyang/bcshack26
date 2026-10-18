@@ -1,4 +1,5 @@
 "use client";
+import { initialInventory, totalInventory } from "@/engine/portfolio";
 import {
   ArrowRight,
   Trophy,
@@ -11,7 +12,6 @@ import {
   Leaf,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getGameCrop } from "@/data/crops";
 import { scoreGame } from "@/engine/scoring";
 import type { GameState } from "@/types/game";
 import { kg, money } from "@/lib/utils";
@@ -50,7 +50,7 @@ export function Results({
           </div>
           <div>
             <span>Remaining inventory</span>
-            <strong>{kg(game.inventory)} kg</strong>
+            <strong>{kg(totalInventory(game))} kg</strong>
           </div>
         </div>
         <Button onClick={onContinue}>
@@ -100,7 +100,7 @@ export function Results({
       <div className="results-grid">
         <section className="panel results-breakdown">
           <div className="panel-heading">
-            <h2>Every kilogram accounted for</h2>
+            <h2>Every crop accounted for</h2>
             <Package size={16} className="text-slate-500" />
           </div>
           <div className="harvest-bar">
@@ -166,8 +166,8 @@ export function Results({
             {money(score.baselineDifference)} vs. baseline
           </p>
           <small>
-            Baseline: sell {kg(getGameCrop(game).initialInventory)} kg to the Day 1 wholesaler,
-            after its delivery and handling costs.
+            Baseline: sell {kg(initialInventory(game))} kg to the Day 1 wholesaler, after its
+            delivery and handling costs.
           </small>
         </section>
       </div>

@@ -1,4 +1,4 @@
-import { getGameCrop } from "@/data/crops";
+import { inventoryItems, totalInventory, initialInventory } from "./portfolio";
 import type { GameState, FinalScore } from "@/types/game";
 import type { MarketDataProvider } from "@/data/market-provider";
 import { marketProvider } from "@/data/simulated-provider";
@@ -10,20 +10,26 @@ export function scoreGame(
   provider: MarketDataProvider = marketProvider,
 ): FinalScore {
   const sold = round(state.transactions.reduce((sum, t) => sum + t.quantity, 0));
-  const opening =
-    state.pricing && state.pricing.legacyTransactionCount === 0
-      ? priceMarketDay(
-          { ...state, freshness: 100, dailyScenarios: undefined },
-          provider.getDay(1),
-          provider,
-        )
-      : provider.getDay(1);
-  const wholesale = opening.offers.find((o) => o.id === "wholesaler")!;
-  // The demo's Day 1 wholesaler can buy the entire initial harvest in one order.
-  const baseline = previewOrder(
-    wholesale,
-    getGameCrop(state, provider.crop).initialInventory,
-  ).netReturn;
+  const baseline = round(
+    inventoryItems(state).reduce((sum, item) => {
+      const opening =
+        state.pricing && state.pricing.legacyTransactionCount === 0
+          ? priceMarketDay(
+              {
+                ...state,
+                activeCropId: state.cropInventory ? item.cropId : undefined,
+                freshness: 100,
+                dailyScenarios: undefined,
+              },
+              provider.getDay(1),
+              provider,
+            )
+          : provider.getDay(1);
+      const wholesale = opening.offers.find((offer) => offer.id === "wholesaler")!;
+      return sum + previewOrder(wholesale, item.initialInventory).netReturn;
+    }, 0),
+  );
+  const remaining = totalInventory(state);
   const netMargin = round(state.grossRevenue - state.sellingCosts - state.storageCosts);
   const baselineDifference = round(netMargin - baseline);
   const channels = new Set(state.transactions.map((t) => t.buyerId)).size;
@@ -34,8 +40,8 @@ export function scoreGame(
     state.spoiled > 0
       ? `Holding cost $${state.storageCosts.toFixed(2)} in storage and ${state.spoiled} kg in spoilage. Higher later prices must offset both losses.`
       : "You avoided spoilage. Selling early protects the harvest, although it gives up the opportunity to benefit from later demand.",
-    state.inventory > 0
-      ? `${state.inventory} kg remained unsold. A lower-price, high-capacity buyer can be valuable when the season is about to end.`
+    remaining > 0
+      ? `${remaining} kg remained unsold. A lower-price, high-capacity buyer can be valuable when the season is about to end.`
       : channels > 1
         ? "You used multiple selling channels. Balancing buyer capacity against delivery costs can outperform chasing the highest quoted price."
         : "Buyer capacity and fixed delivery costs matter. Compare a large wholesale order with several smaller, higher-price orders next season.",
@@ -47,9 +53,9 @@ export function scoreGame(
     netMargin,
     sold,
     spoiled: state.spoiled,
-    unsold: state.inventory,
-    wastedOrUnsold: round(state.spoiled + state.inventory),
-    soldPercent: round((sold / getGameCrop(state, provider.crop).initialInventory) * 100),
+    unsold: remaining,
+    wastedOrUnsold: round(state.spoiled + remaining),
+    soldPercent: initialInventory(state) > 0 ? round((sold / initialInventory(state)) * 100) : 0,
     baseline,
     baselineDifference,
     takeaways,
