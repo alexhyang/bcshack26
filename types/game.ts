@@ -32,6 +32,8 @@ export interface MarketEvent {
 
 export interface MarketDay {
   day: number;
+  /** Marks the scenario already applied to these quotes to prevent compounding. */
+  scenarioEventId?: string;
   offers: readonly BuyerOffer[];
   events: readonly MarketEvent[];
   storageCostPerKg: number;
@@ -67,6 +69,7 @@ export interface DaySummary {
 }
 
 export interface GameState {
+  dailyScenarios?: Record<number, { cards: string[]; selected?: string }>;
   scenarioId: string;
   day: number;
   inventory: number;

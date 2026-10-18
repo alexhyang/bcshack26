@@ -49,6 +49,7 @@ export function calculateFinalPrice({
     channelMultiplier,
     freshnessMultiplier,
     demandMultiplier,
+    scenarioMultiplier: 1,
     combinedMultiplier,
     finalPrice: round(nonnegative(nonnegative(marketPrice) * combinedMultiplier)),
   };

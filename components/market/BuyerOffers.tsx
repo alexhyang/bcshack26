@@ -32,7 +32,8 @@ export function BuyerOffers({
     .filter(
       (o) =>
         !game.transactions.some((t) => t.day === game.day && t.buyerId === o.id) &&
-        game.inventory > 0,
+        game.inventory > 0 &&
+        o.capacity > 0,
     )
     .sort((a, b) => {
       const qA = Math.min(a.capacity, game.inventory),
@@ -84,7 +85,14 @@ export function BuyerOffers({
               </div>
               <div className="buyer-capacity">
                 <span>Capacity</span>
-                <strong>{traded ? "Order filled" : `${kg(offer.capacity)} kg`}</strong>
+
+                <strong>
+                  {offer.capacity === 0
+                    ? "Closed today"
+                    : traded
+                      ? "Order filled"
+                      : `${kg(offer.capacity)} kg`}
+                </strong>
               </div>
               <div className="buyer-delivery">
                 <Truck size={11} />${offer.fixedCost} + ${offer.variableCost.toFixed(2)}/kg
@@ -94,7 +102,9 @@ export function BuyerOffers({
                   ? "Available again next day"
                   : max > 0
                     ? `${money(net)}/kg net at ${kg(max)} kg`
-                    : "No inventory remaining"}
+                    : offer.capacity === 0
+                      ? "Unavailable for this session"
+                      : "No inventory remaining"}
               </div>
             </button>
           );

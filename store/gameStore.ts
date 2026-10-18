@@ -9,7 +9,10 @@ import { restoreGame } from "@/engine/saves";
 import { createMarketSeed } from "@/features/pricing/random";
 const freshSeason = () => createInitialState(marketProvider, { seed: createMarketSeed() });
 
+import { prepareScenario, chooseScenario } from "@/engine/scenario";
 interface GameStore {
+  dealScenario: () => void;
+  pickScenario: (index: number) => void;
   game: GameState;
   sell: (buyer: BuyerId, quantity: number) => GameResult;
   nextDay: () => GameResult;
@@ -20,15 +23,26 @@ export const useGameStore = create<GameStore>()(
   persist(
     (set, get) => ({
       game: freshSeason(),
+      dealScenario: () => set({ game: prepareScenario(get().game) }),
+      pickScenario: (index) => {
+        const result = chooseScenario(get().game, index);
+        if (result.ok) set({ game: result.state });
+      },
       sell: (buyer, quantity) => {
-        const current = get().game;
+        const current = prepareScenario(get().game);
+
         const result = executeSale(current, marketProvider.getDay(current.day), buyer, quantity);
+
         if (result.ok) set({ game: result.state });
         return result;
       },
       nextDay: () => {
-        const result = advanceDay(get().game);
-        if (result.ok) set({ game: result.state });
+        const current = prepareScenario(get().game);
+
+        const result = advanceDay(current);
+
+        if (result.ok) set({ game: prepareScenario(result.state) });
+
         return result;
       },
       reset: () => set({ game: freshSeason() }),

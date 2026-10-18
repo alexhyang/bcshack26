@@ -38,7 +38,7 @@ export const tutorialSteps: readonly TutorialStep[] = [
     label: "Compare buyers",
     title: "A high price is only part of the deal.",
     description:
-      "Compare price, capacity, and selling costs. Open Show Price Breakdown to see how channel, crop freshness, and today’s demand combine. Restaurants reward fresh crops; wholesalers are more tolerant as crops age.",
+      "First reveal one of today’s three scenario cards above the chart to unlock trading. Then compare price, capacity, and selling costs. Show Price Breakdown explains freshness, demand, channel, and the selected scenario’s effect.",
     hint: "Click a buyer card after the tour to select them. Each buyer accepts one order per day, even if you use only part of their capacity.",
   },
   {

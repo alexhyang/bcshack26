@@ -16,7 +16,7 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000). The game starts with a complete scenario. Progress automatically saves in this browser’s localStorage. Reset Game clears the current season and starts fresh.
 
 ```bash
-npm test               # 83 unit and state tests
+npm test               # 104 unit and state tests
 npm run test:watch     # watch tests during development
 npm run typecheck     # TypeScript checks
 npm run lint          # Next.js, accessibility, and React lint rules
@@ -50,9 +50,9 @@ Today’s buyer cards highlight the highest net return **per kg at each buyer’
 - Freshness reduces buyer prices through the centralized crop- and channel-specific pricing formula. Spoilage independently removes kilograms from inventory. The existing freshness value is reused; there is no second freshness clock.
 - Remaining inventory after the final session has **zero salvage value**. Results list spoiled and unsold quantities separately and in total.
 - Production costs are excluded. **Net selling margin is not full farm profit.**
-- Baseline: sell all 1,000 kg to the Day 1 wholesaler under the same opening conditions, after delivery and handling. Medium demand at the $1.12 market reference gives **$976**; new seasons can have a different baseline because opening demand is randomized. Migrated seasons with original trades retain their original $976 baseline.
+- Baseline: sell all 1,000 kg to the Day 1 wholesaler under the same opening conditions, after delivery and handling. Medium demand at the $1.12 market reference gives **$976**; new seasons can have a different baseline because opening demand is randomized. The benchmark excludes the random scenario card so a wholesale shutdown does not create an impossible comparison. Migrated seasons with original trades retain their original $976 baseline.
 
-The scenario retains its restaurant capacity surge, bumper harvest, highway closure, grocery promotion, extreme heat, and supply shortage. Capacity, delivery/storage expenses, and spoilage remain driven by the existing scenario. Buyer prices now come from one formula: **market base × channel × freshness × demand**. Daily shocks update the market base; they do not reapply scenario price modifiers. No future events or prices appear in the UI.
+The scenario retains its restaurant capacity surge, bumper harvest, highway closure, grocery promotion, extreme heat, and supply shortage. Capacity, delivery/storage expenses, and spoilage remain driven by the existing scenario. Buyer prices now come from one formula: **market base × channel × freshness × demand × daily scenario**. Daily shocks update the market base; the revealed card applies its multiplier once and can close a buyer for that day. No future events or prices appear in the UI.
 
 ## Dynamic pricing
 
@@ -104,7 +104,7 @@ React components render and collect input. They invoke Zustand actions rather th
 
 ## Verification
 
-83 Vitest tests cover original trading/accounting, storage/spoilage, the seven-day loop, reset, saved-state recovery, tour positioning, build-output isolation, and 37 dynamic-pricing cases. Pricing tests verify the full freshness curve, lettuce’s 80% channel reversal, demand weights and exact bucket boundaries, crop-specific shock probabilities/magnitudes, 50/50 directions, price caps, daily stability, quote/preview/execution agreement, every crop’s daily rolls, seven-day replay, legacy migration, and live-provider isolation.
+104 Vitest tests cover original trading/accounting, storage/spoilage, the seven-day loop, reset, saved-state recovery, tour positioning, build-output isolation, and 37 dynamic-pricing cases. Pricing tests verify the full freshness curve, lettuce’s 80% channel reversal, demand weights and exact bucket boundaries, crop-specific shock probabilities/magnitudes, 50/50 directions, price caps, daily stability, quote/preview/execution agreement, every crop’s daily rolls, seven-day replay, legacy migration, and live-provider isolation. Scenario integration checks cover all 12 cards, quote/execution agreement, closures, historical prices, pre-pricing save migration, and full-season replay.
 
 The original fixed-price tests remain explicit legacy fixtures so migrated orders retain their original accounting. New pricing tests exercise the default dynamic game and exact persisted-state replay. Browser verification includes the actual dashboard, breakdown panel, a sale, advancement, and save/reload.
 
@@ -130,3 +130,9 @@ You can also run `npx vercel` from the repository if you already have a Vercel a
 One playable crop, five simulated crop markets, a seven-day scenario with seeded market variation, three fictional buyer channels, and browser-local saves. Each order settles immediately; there are no in-transit shipments, financing costs, full production budgets, or inventory purchases. Refreshing preserves progress within the same browser and origin; saves do not sync between devices. If localStorage is blocked, the game remains playable in memory and displays a warning.
 
 Built with Next.js App Router, React, TypeScript, Tailwind CSS v4, shadcn/ui patterns with Radix primitives, Recharts, Zustand persist, Lucide, and Vitest. The lockfile records the installed dependency versions.
+
+### Daily scenario cards
+
+At the start of every day, choose one of three randomly dealt face-down cards in the Scenario module. The chosen event applies only for that day; the other cards stay hidden. Trading and advancing are locked until a card is revealed.
+Twelve fictional events cover frost, rain, heatwaves, a public-holiday restaurant shutdown, a wholesale strike, a food festival, bumper harvests, import restrictions and resumptions, school lunches, bridge closures, and supermarket promotions. Each event sets a separate price multiplier for wholesalers, retailers, and restaurants. Closed channels have zero buying capacity. Displayed prices, sale previews, transactions, and historical charts use the same adjusted daily prices; delivery costs are unchanged.
+Hands and choices are saved with the season and validated when restoring orders. Reloading keeps the same draw. Older saved games retain original prices for days already traded; scenario cards begin with the next untraded session. Edit `engine/scenario.ts` to add events or tune their illustrative multipliers.

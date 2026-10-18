@@ -1,3 +1,4 @@
+import { getScenario } from "@/engine/scenario";
 import {
   Radio,
   CloudSun,
@@ -44,6 +45,7 @@ const lessons = [
 ];
 export function NewsFeed({ game }: { game: GameState }) {
   const market = getMarketForGame(game);
+  const scenario = getScenario(game);
   const oldEvents = getMarketHistory(game)
     .slice(0, -1)
     .flatMap((d) => d.events.map((e) => ({ ...e, day: d.day })))
@@ -61,9 +63,19 @@ export function NewsFeed({ game }: { game: GameState }) {
           <span className="live-dot" />
         </div>
         <div className="news-section-label">
-          TODAY’S MARKET MOVERS<span>{market.events.length} ACTIVE</span>
+          TODAY’S MARKET MOVERS<span>{market.events.length + (scenario ? 1 : 0)} ACTIVE</span>
         </div>
         <div className="events-list">
+          {scenario && (
+            <article className="event-card neutral">
+              <div className="event-meta">
+                <span>DAILY SCENARIO</span>
+                <span>DAY {game.day}</span>
+              </div>
+              <h3>{scenario.title}</h3>
+              <p>{scenario.description}</p>
+            </article>
+          )}
           {market.events.map((event) => (
             <EventCard key={event.id} event={event} day={game.day} />
           ))}

@@ -1,3 +1,4 @@
+import { SCENARIO_EVENTS } from "./scenario";
 import { marketProvider } from "@/data/simulated-provider";
 import { advanceDay, createInitialState } from "./game";
 import { executeSale } from "./trading";
@@ -54,6 +55,33 @@ export function restoreGame(value: unknown): GameState {
     return initial;
   let state = createInitialState(marketProvider, { dynamicPricing: false });
   let index = 0;
+  if (saved.dailyScenarios !== undefined) {
+    if (
+      !saved.dailyScenarios ||
+      typeof saved.dailyScenarios !== "object" ||
+      Array.isArray(saved.dailyScenarios)
+    )
+      return initial;
+    const hands = saved.dailyScenarios as NonNullable<GameState["dailyScenarios"]>;
+    for (const [key, hand] of Object.entries(hands)) {
+      const day = Number(key);
+      if (
+        !Number.isInteger(day) ||
+        day < 1 ||
+        day > (saved.day as number) ||
+        !hand ||
+        !Array.isArray(hand.cards) ||
+        hand.cards.length !== 3 ||
+        new Set(hand.cards).size !== 3 ||
+        hand.cards.some((id) => !SCENARIO_EVENTS.some((e) => e.id === id)) ||
+        (hand.selected !== undefined && !hand.cards.includes(hand.selected)) ||
+        ((day < (saved.day as number) || saved.completed) && !hand.selected)
+      )
+        return initial;
+    }
+    state = { ...state, dailyScenarios: hands };
+  }
+
   for (let day = 1; day <= (saved.day as number); day++) {
     if (pricing && day === pricing.startedDay)
       state = enableDynamicPricing(state, pricing.seed, pricing.legacyTransactionCount);

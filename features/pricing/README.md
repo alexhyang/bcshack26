@@ -15,6 +15,7 @@ This module extends the existing FarmStreet engine, Zustand save, dashboard, and
 | `components/PriceBreakdown.tsx` | Breakdown dialog, demand badges, price movement, other-crop market watch                 |
 | `pricing.css`                   | Responsive styling matching the dashboard                                                |
 | `__tests__/pricing.test.ts`     | 37 pricing, simulation, integration, and migration tests                                 |
+| `__tests__/scenarios.test.ts`   | 15 scenario/pricing integration and migration tests                                      |
 
 Integration changes live in `engine/game.ts`, `trading.ts`, `scoring.ts`, `saves.ts`, `store/gameStore.ts`, shared game/provider types, existing market/trading/news components, and tutorial text. `lib/numbers.ts` shares currency rounding with the existing engine.
 
@@ -37,7 +38,7 @@ Integration changes live in `engine/game.ts`, `trading.ts`, `scoring.ts`, `saves
 ```text
 f = clamp(existing game freshness, 0, 100) / 100
 freshness multiplier = f × max(0, 1 − channel penalty × crop sensitivity × (1 − f))
-combined multiplier = channel multiplier × freshness multiplier × demand multiplier
+combined multiplier = channel multiplier × freshness multiplier × demand multiplier × scenario multiplier
 final price = roundToCents(market base × combined multiplier)
 ```
 
@@ -45,7 +46,7 @@ final price = roundToCents(market base × combined multiplier)
 
 The market base retains full precision through daily shocks. The dialog shows six decimal places for auditability and multiplier displays use four; only the executable final quote rounds to cents. The main dashboard presents base prices to two decimals.
 
-At $3/kg, 80% lettuce freshness, and medium demand, restaurant offers round to **$1.81/kg**, retailer to **$2.05/kg**, and wholesaler to **$2.28/kg**. These values come from the actual formula.
+At $3/kg, 80% lettuce freshness, and medium demand, restaurant offers round to **$1.81/kg**, retailer to **$2.05/kg**, and wholesaler to **$2.28/kg**. These values come from the actual formula, before a daily scenario card modifies the offers.
 
 ## Balance settings
 
@@ -79,9 +80,9 @@ Restoration validates metadata and rebuilds history from the seed while replayin
 
 A migrated season starts its current carrot base from that day’s original wholesale quote, within the reference caps. Other crops start at their fictional references. Earlier legacy chart observations remain unchanged. Completed original seasons keep their original accounting and cannot place new orders.
 
-New-season baselines use the actual opening demand at 100% freshness. Migrated seasons with original executed orders retain the original baseline. At medium demand the original wholesale baseline is $976.
+New-season baselines use the actual opening demand at 100% freshness, excluding the random scenario card so the benchmark remains meaningful if wholesale is closed. Migrated seasons with original executed orders retain the original baseline. At medium demand the original wholesale baseline is $976.
 
-Existing scenario capacities, fees, weather, storage and spoilage remain authoritative. Its old price table is retained solely for replaying original trades. Dynamic news impacts show the actual recalculated quote/capacity; old price-event multipliers are not reapplied. Providers explicitly marked `mode: "live"` bypass this simulation module; no live integration has been introduced.
+Existing scenario capacities, fees, weather, storage and spoilage remain authoritative. Its old price table is retained solely for replaying original trades. Dynamic news impacts show the actual recalculated quote/capacity; old fixed price-event multipliers are not reapplied. The separate daily face-down scenario card contributes one buyer-specific multiplier through `engine/scenario.ts`; its closure is enforced even when an order supplies raw market data. The breakdown includes this multiplier, closed buyers are excluded from the highest-price highlight, and saved choices replay alongside seeded markets. Providers explicitly marked `mode: "live"` bypass this simulation module; no live integration has been introduced.
 
 ## Try it
 
@@ -94,8 +95,8 @@ npm run build
 ```
 
 1. Open the app and skip the tour. An existing save migrates automatically; you do not need to reset it.
-2. Above **Today’s buyer offers**, check the market base, daily movement, and demand badge.
-3. Open **Show Price Breakdown**. Compare all channel/freshness/demand/combined multipliers and the highlighted highest quote.
+2. Reveal one of today’s three face-down scenario cards to unlock trading. Above **Today’s buyer offers**, check the market base, daily movement, and demand badge.
+3. Open **Show Price Breakdown**. Compare all channel/freshness/demand/scenario/combined multipliers and the highlighted highest quote.
 4. Review the other-crop watch in the same dialog. These are read-only simulated markets.
 5. Close the dialog, choose a buyer, enter a quantity, and compare the preview against its quoted price. Confirming still charges the existing delivery and handling costs.
 6. Choose **Next Market Day** and confirm. Remaining inventory incurs the usual storage/spoilage, freshness falls, demand regenerates, and shocks may change market bases.

@@ -11,7 +11,11 @@ export function scoreGame(
   const sold = round(state.transactions.reduce((sum, t) => sum + t.quantity, 0));
   const opening =
     state.pricing && state.pricing.legacyTransactionCount === 0
-      ? priceMarketDay({ ...state, freshness: 100 }, provider.getDay(1), provider)
+      ? priceMarketDay(
+          { ...state, freshness: 100, dailyScenarios: undefined },
+          provider.getDay(1),
+          provider,
+        )
       : provider.getDay(1);
   const wholesale = opening.offers.find((o) => o.id === "wholesaler")!;
   // The demo's Day 1 wholesaler can buy the entire initial harvest in one order.

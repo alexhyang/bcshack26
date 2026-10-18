@@ -7,6 +7,7 @@ import { createSeededRandom } from "./random";
 import { generateCropMarket } from "./simulation";
 import type { DynamicPricingState, MarketSnapshot } from "./types";
 import { money } from "@/lib/utils";
+import { scenarioMarket } from "@/engine/scenario";
 
 function generateSnapshot(
   day: number,
@@ -112,8 +113,8 @@ export function priceMarketDay(
   rawDay: Readonly<MarketDay>,
   provider: MarketDataProvider = marketProvider,
 ): Readonly<MarketDay> {
-  if (provider.mode === "live" || !state.pricing || rawDay.day < state.pricing.startedDay)
-    return rawDay;
+  if (provider.mode === "live") return rawDay;
+  if (!state.pricing || rawDay.day < state.pricing.startedDay) return scenarioMarket(state, rawDay);
   const snapshot = state.pricing.history.find((s) => s.day === rawDay.day);
   if (!snapshot) throw new Error("No revealed market snapshot exists for this day.");
   const cropMarket = snapshot.crops[provider.crop.id];
@@ -129,10 +130,14 @@ export function priceMarketDay(
     });
     return { ...offer, price: pricing.finalPrice, pricing };
   });
-  return {
+  const market = scenarioMarket(state, {
     ...rawDay,
+    scenarioEventId: undefined,
     offers,
-    events: rawDay.events.map((event) => eventWithCurrentOffer(event, offers)),
+  });
+  return {
+    ...market,
+    events: rawDay.events.map((event) => eventWithCurrentOffer(event, market.offers)),
   };
 }
 export function getMarketForGame(state: GameState, provider: MarketDataProvider = marketProvider) {

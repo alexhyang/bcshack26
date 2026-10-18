@@ -1,3 +1,4 @@
+import { scenarioPending } from "./scenario";
 import type { MarketDataProvider } from "@/data/market-provider";
 import { marketProvider } from "@/data/simulated-provider";
 import type { DaySummary, GameResult, GameState } from "@/types/game";
@@ -34,6 +35,8 @@ export function advanceDay(
   state: GameState,
   provider: MarketDataProvider = marketProvider,
 ): GameResult {
+  if (scenarioPending(state))
+    return { ok: false, error: "Choose today’s scenario before advancing." };
   if (state.completed) return { ok: false, error: "This season is already complete." };
   const today = provider.getDay(state.day);
   const trades = state.transactions.filter((t) => t.day === state.day);

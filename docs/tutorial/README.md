@@ -16,6 +16,8 @@ The top cards show your cash, selling margin, inventory, and freshness. The port
 
 ## 2. Compare the market
 
+Reveal one of the three **Daily scenario** cards above the chart before trading or advancing. The selected card changes buyer prices for this day and may close a buyer. The other cards stay hidden; tomorrow brings a new draw. Your draw and choice survive reloading.
+
 Read **Today’s buyer offers**:
 
 - **Wholesaler:** lower price, larger purchasing capacity, and lower per-kg handling costs.
@@ -28,11 +30,11 @@ Use **1D**, **3D**, or **ALL** to change the chart range. Click channel names un
 
 ## 3. Check what you keep
 
-Open **Show Price Breakdown** above the buyer cards to see the market base, crop freshness, demand, channel multipliers, and resulting price per kg for every buyer. The highest quoted price is highlighted, but delivery and handling can still change the best net return. The panel also shows the other four simulated crop markets.
+Open **Show Price Breakdown** above the buyer cards to see the market base, crop freshness, demand, channel and daily scenario multipliers, and resulting price per kg for every buyer. The highest quoted price is highlighted, but delivery and handling can still change the best net return. The panel also shows the other four simulated crop markets.
 
 The tour points out the real order inputs and cost breakdown. After closing the tour, select a buyer and adjust your quantity to see the estimated return. Nothing is sold until you choose **Confirm sale**.
 
-For example, selling 100 kg to the Day 1 wholesaler gives:
+For example, at a $1.12/kg wholesale quote, selling 100 kg gives (your actual quote depends on demand and the selected scenario):
 
 | Item               | Calculation                 |     Amount |
 | ------------------ | --------------------------- | ---------: |
@@ -71,7 +73,7 @@ You can still trade on **Day 7**. When you have made your final sales, choose **
 
 Results show your revenue, selling expenses, storage costs, net selling margin, sold inventory, spoiled stock, and unsold stock. Unsold carrots have $0 salvage value.
 
-Your strategy is compared with selling all 1,000 kg to the Day 1 wholesaler under the same opening conditions. At medium demand, its $1.12/kg offer minus $24 delivery and $120 handling produces **$976**. High or low opening demand changes this baseline for a new dynamic season. Existing migrated trades retain their original baseline. Read the three takeaways for feedback on your decisions.
+Your strategy is compared with selling all 1,000 kg to the Day 1 wholesaler under the same opening conditions. At medium demand, its $1.12/kg offer minus $24 delivery and $120 handling produces **$976**. High or low opening demand changes this baseline for a new dynamic season. The benchmark excludes the random scenario card, including wholesale shutdowns. Existing migrated trades retain their original baseline. Read the three takeaways for feedback on your decisions.
 
 **Play again** starts a new season. **Reset game** in the header also starts over after confirmation. Otherwise, progress saves automatically in the same browser.
 

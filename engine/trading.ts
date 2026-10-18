@@ -1,3 +1,4 @@
+import { scenarioPending } from "./scenario";
 import type {
   BuyerId,
   BuyerOffer,
@@ -33,6 +34,7 @@ export function validateOrder(
   buyerId: BuyerId,
   quantity: number,
 ): string | null {
+  if (scenarioPending(state)) return "Reveal today’s scenario card before trading.";
   if (state.completed) return "This season has ended. Start a new season to trade.";
   if (day.day !== state.day) return "The market has changed. Review today's offer.";
   const offer = getBuyer(day, buyerId);
@@ -44,6 +46,7 @@ export function validateOrder(
   if (state.transactions.some((t) => t.day === state.day && t.buyerId === buyerId))
     return "You have already sold to this buyer today. Each buyer accepts one order per day.";
   if (quantity > state.inventory) return "This order exceeds your available inventory.";
+  if (offer.capacity === 0) return "This buyer is closed today.";
   if (quantity > offer.capacity) return "This order exceeds the buyer's remaining capacity.";
   return null;
 }
@@ -54,9 +57,12 @@ export function executeSale(
   buyerId: BuyerId,
   quantity: number,
 ): GameResult {
-  const error = validateOrder(state, day, buyerId, quantity);
+  if (day.day !== state.day)
+    return { ok: false, error: "The market has changed. Review today's offer." };
+  const market = priceMarketDay(state, day);
+  const error = validateOrder(state, market, buyerId, quantity);
   if (error) return { ok: false, error };
-  const offer = getBuyer(priceMarketDay(state, day), buyerId)!;
+  const offer = getBuyer(market, buyerId)!;
   const preview = previewOrder(offer, quantity);
   const transaction: Transaction = {
     ...preview,

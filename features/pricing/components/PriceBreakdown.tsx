@@ -10,9 +10,9 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { marketProvider } from "@/data/simulated-provider";
+import { scenarioPending } from "@/engine/scenario";
 import { CROP_PRICING, getCropPricing } from "../config";
-import { getCurrentCropMarket } from "../market";
-import { compareBuyerOffers } from "../pricing";
+import { getCurrentCropMarket, getMarketForGame } from "../market";
 import type { DemandBucket } from "../types";
 import type { GameState } from "@/types/game";
 import { money } from "@/lib/utils";
@@ -34,17 +34,19 @@ export function PriceBreakdown({ game }: { game: GameState }) {
   const current = getCurrentCropMarket(game);
   if (!current) return null;
   const crop = getCropPricing(marketProvider.crop);
-  const offers = compareBuyerOffers({
-    crop,
-    marketPrice: current.marketPrice,
-    freshness: game.freshness,
-    demand: current.demand,
+  const market = getMarketForGame(game);
+  const offers = (["restaurant", "retailer", "wholesaler"] as const).map((channel) => {
+    const offer = market.offers.find((o) => o.id === channel)!;
+    return { ...offer.pricing!, capacity: offer.capacity };
   });
-  const highest = Math.max(...offers.map((offer) => offer.finalPrice));
+  const highest = Math.max(
+    ...offers.filter((offer) => offer.capacity > 0).map((offer) => offer.finalPrice),
+  );
   const rows = [
     { name: "Channel", key: "channelMultiplier" },
     { name: "Freshness", key: "freshnessMultiplier" },
     { name: "Demand", key: "demandMultiplier" },
+    { name: "Daily scenario", key: "scenarioMultiplier" },
     { name: "Combined", key: "combinedMultiplier" },
   ] as const;
   const snapshots = game.pricing!.history.at(-1)!;
@@ -72,8 +74,10 @@ export function PriceBreakdown({ game }: { game: GameState }) {
               What drives your selling price?
             </DialogTitle>
             <DialogDescription className="mt-2 text-xs leading-6 text-slate-400">
-              Market price × channel × freshness × demand. These are today’s executable simulated
-              offers, before delivery and handling costs.
+              Market price × channel × freshness × demand × daily scenario. These are today’s
+              executable simulated offers, before delivery and handling costs.
+              {scenarioPending(game) &&
+                " Reveal today’s scenario card to finalize quotes and unlock trading."}
             </DialogDescription>
             <div className="pricing-context">
               <div>
@@ -120,9 +124,13 @@ export function PriceBreakdown({ game }: { game: GameState }) {
                   <tr className="pricing-final-row">
                     <td>Final price / kg</td>
                     {offers.map((o) => (
-                      <td key={o.channel} className={o.finalPrice === highest ? "positive" : ""}>
+                      <td
+                        key={o.channel}
+                        className={o.capacity > 0 && o.finalPrice === highest ? "positive" : ""}
+                      >
                         {money(o.finalPrice)}
-                        {o.finalPrice === highest && (
+                        {o.capacity === 0 && <span className="pricing-best">CLOSED TODAY</span>}
+                        {o.capacity > 0 && o.finalPrice === highest && (
                           <span className="pricing-best">HIGHEST PRICE</span>
                         )}
                       </td>

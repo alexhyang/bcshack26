@@ -20,6 +20,7 @@ export interface PriceBreakdown {
   channelMultiplier: number;
   freshnessMultiplier: number;
   demandMultiplier: number;
+  scenarioMultiplier: number;
   combinedMultiplier: number;
   finalPrice: number;
 }
