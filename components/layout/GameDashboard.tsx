@@ -1,4 +1,7 @@
 "use client";
+import { Scenario } from "@/components/events/Scenario";
+import { getScenario, scenarioPending } from "@/engine/scenario";
+import { scenarioMarket } from "@/engine/scenario";
 import { useEffect, useState } from "react";
 import {
   ArrowRight,
@@ -33,7 +36,8 @@ import {
 import { marketProvider } from "@/data/simulated-provider";
 import { kg, money } from "@/lib/utils";
 export function GameDashboard() {
-  const { game, nextDay, reset } = useGameStore();
+  const { game, nextDay, reset, dealScenario } = useGameStore();
+
   const [ready, setReady] = useState(false);
   // Deliberately not persisted: show the guide on every launch, including saved seasons.
   const [tutorialOpen, setTutorialOpen] = useState(true);
@@ -54,6 +58,9 @@ export function GameDashboard() {
       setSaveWarning(true);
     }
   }, []);
+  useEffect(() => {
+    if (ready) dealScenario();
+  }, [ready, game.day, game.completed, game.dailyScenarios, dealScenario]);
   function restart() {
     reset();
     setView("dashboard");
@@ -65,7 +72,9 @@ export function GameDashboard() {
     setAdvanceOpen(false);
     if (result.ok && result.state.completed) setView("results");
   }
-  const market = marketProvider.getDay(game.day);
+
+  const market = scenarioMarket(game, marketProvider.getDay(game.day));
+
   const lastSummary = game.summaries.at(-1);
   const todayTrades = game.transactions.filter((t) => t.day === game.day);
   const todayNet = todayTrades.reduce((sum, t) => sum + t.netReturn, 0);
@@ -171,7 +180,16 @@ export function GameDashboard() {
                     <article key={s.day}>
                       <span className="day-chip">Day {s.day}</span>
                       <div>
-                        <p>{s.feedback}</p>
+                        <p>
+                          {getScenario(game, s.day) && (
+                            <>
+                              <strong>{getScenario(game, s.day)!.title}</strong>
+                              {" · "}
+                            </>
+                          )}
+                          {s.feedback}
+                        </p>
+
                         <small>
                           {kg(s.sold)} kg sold · {money(s.netReturn)} selling return ·{" "}
                           {money(s.storageCosts)} storage
@@ -184,6 +202,7 @@ export function GameDashboard() {
             </>
           ) : (
             <>
+              <Scenario game={game} />
               {lastSummary && dismissedDay !== game.day && (
                 <div className="daily-feedback" role="status">
                   <CheckCircle2 size={18} />
@@ -199,7 +218,8 @@ export function GameDashboard() {
               <div className="dashboard-columns">
                 <div className="market-column">
                   <div className="market-top-row">
-                    <PriceChart day={game.day} />
+                    <PriceChart game={game} />
+
                     <SellPanel
                       key={`${game.day}-${selected}`}
                       game={game}
@@ -233,7 +253,13 @@ export function GameDashboard() {
                     <Clock3 size={12} />
                     {game.day === 7 ? "Last call for your harvest" : "Tomorrow is a new market"}
                   </span>
-                  <Button size="lg" data-tour="next-day" onClick={() => setAdvanceOpen(true)}>
+
+                  <Button
+                    size="lg"
+                    data-tour="next-day"
+                    disabled={scenarioPending(game)}
+                    onClick={() => setAdvanceOpen(true)}
+                  >
                     {game.day === 7 ? "End season" : "Next day"}
                     <ArrowRight size={16} />
                   </Button>

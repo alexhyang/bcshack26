@@ -1,4 +1,5 @@
 "use client";
+import { scenarioMarket } from "@/engine/scenario";
 import { useState } from "react";
 import { ArrowUpRight, CheckCircle2, Info, Package, AlertCircle, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,8 @@ export function SellPanel({
   selected: BuyerId;
   onSelect: (id: BuyerId) => void;
 }) {
-  const market = marketProvider.getDay(game.day);
+  const market = scenarioMarket(game, marketProvider.getDay(game.day));
+
   const offer = market.offers.find((o) => o.id === selected)!;
   const sell = useGameStore((state) => state.sell);
   const [quantity, setQuantity] = useState("100");

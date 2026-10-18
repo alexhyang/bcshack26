@@ -46,6 +46,8 @@ describe("saved seasons", () => {
     });
     const { useGameStore } = await import("@/store/gameStore");
     useGameStore.getState().reset();
+    useGameStore.getState().dealScenario();
+    useGameStore.getState().pickScenario(0);
     useGameStore.getState().sell("restaurant", 100);
     useGameStore.getState().nextDay();
     expect(useGameStore.getState().game.day).toBe(2);

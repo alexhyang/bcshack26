@@ -7,7 +7,10 @@ import { executeSale } from "@/engine/trading";
 import { marketProvider } from "@/data/simulated-provider";
 import { restoreGame } from "@/engine/saves";
 
+import { prepareScenario, chooseScenario, scenarioMarket } from "@/engine/scenario";
 interface GameStore {
+  dealScenario: () => void;
+  pickScenario: (index: number) => void;
   game: GameState;
   sell: (buyer: BuyerId, quantity: number) => GameResult;
   nextDay: () => GameResult;
@@ -18,15 +21,31 @@ export const useGameStore = create<GameStore>()(
   persist(
     (set, get) => ({
       game: createInitialState(),
+      dealScenario: () => set({ game: prepareScenario(get().game) }),
+      pickScenario: (index) => {
+        const result = chooseScenario(get().game, index);
+        if (result.ok) set({ game: result.state });
+      },
       sell: (buyer, quantity) => {
-        const current = get().game;
-        const result = executeSale(current, marketProvider.getDay(current.day), buyer, quantity);
+        const current = prepareScenario(get().game);
+
+        const result = executeSale(
+          current,
+          scenarioMarket(current, marketProvider.getDay(current.day)),
+          buyer,
+          quantity,
+        );
+
         if (result.ok) set({ game: result.state });
         return result;
       },
       nextDay: () => {
-        const result = advanceDay(get().game);
-        if (result.ok) set({ game: result.state });
+        const current = prepareScenario(get().game);
+
+        const result = advanceDay(current);
+
+        if (result.ok) set({ game: prepareScenario(result.state) });
+
         return result;
       },
       reset: () => set({ game: createInitialState() }),

@@ -63,6 +63,7 @@ export interface DaySummary {
 }
 
 export interface GameState {
+  dailyScenarios?: Record<number, { cards: string[]; selected?: string }>;
   scenarioId: string;
   day: number;
   inventory: number;
